@@ -8,7 +8,7 @@ exports.signup = (req, res, next) => {
     const regex_email = /^[-._a-zA-Z0-9]+@[-._a-zA-Z0-9]+\.[a-zA-Z]{2,5}$/;
     const regex_mdp = /^.{8,64}$/;
     if (!regex_nom.test(req.body.nom) || !regex_nom.test(req.body.prenom) || !regex_email.test(req.body.email) || !regex_mdp.test(req.body.mdp)) {
-        return res.status(500).json({ message: 'Données invalides' });
+        return res.status(500).json({ message: 'Les données reçues par le serveur sont invalides.' });
     }
     bcrypt.hash(req.body.mdp, 10).then((hash) => {
         const nouv_membre = [
@@ -19,9 +19,9 @@ exports.signup = (req, res, next) => {
         ];
         apiReq.ajoutMembre(nouv_membre, (error, result) => {
             if (error) {
-                console.log(error);
-                res.status(500).json({ message: 'Cet email est déjà utilisé.' });
+                return res.status(500).json({ message: 'Cet email est déjà utilisé.' });
             }
+            return res.status(201).json({ message: 'Le compte utilisateur a bien été créé.' });
         });
     }).catch(() => {
         res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' });
@@ -29,14 +29,14 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    const data = [req.body.email];
-    apiReq.recupMembre(data, (error, result) => {
+    apiReq.recupMembre([req.body.email], (error, result) => {
         if (error) { console.log(error); }
         if (result.length) {
             bcrypt.compare(req.body.mdp, result[0].mdp).then((valid) => {
                 if (!valid) {
-                    return res.status(401).json({ message: 'Mot de passe incorrect' });
+                    return res.status(401).json({ message: 'Le mot de passe est incorrect.' });
                 }
+                apiReq.majDerniereConnexion([result[0].id]);
                 res.status(200).json({
                     user: {
                         id: result[0].id,
@@ -45,6 +45,7 @@ exports.login = (req, res, next) => {
                         email: result[0].email,
                         date_inscription: result[0].date_inscription,
                         derniere_connexion: result[0].derniere_connexion,
+                        description: result[0].description,
                         avatar: result[0].avatar,
                         status: result[0].status
                     },
@@ -57,7 +58,7 @@ exports.login = (req, res, next) => {
                 });
             });
         } else {
-            res.status(401).json({ message: 'Email invalide' });
+            res.status(401).json({ message: 'Ce compte utilisateur n\'existe pas.' });
         }
     });
 };

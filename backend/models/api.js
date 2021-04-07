@@ -26,3 +26,11 @@ exports.recupMembre = (data, callback) => {
         WHERE email = ?
     `, data, callback);
 };
+
+exports.majDerniereConnexion = (data, callback) => {
+    apidb.query(`
+        UPDATE Membres
+        SET derniere_connexion = NOW()
+        WHERE id = ?
+    `, data, callback);
+};

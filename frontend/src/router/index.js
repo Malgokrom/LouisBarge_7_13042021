@@ -11,7 +11,21 @@ const routes = [
         path: '/inscription',
         name: 'Inscription',
         component: function () {
-            return import('../views/Inscription.vue')
+            return import('../views/Inscription.vue');
+        }
+    },
+    {
+        path: '/publications',
+        name: 'Publications',
+        component: function () {
+            return import('../views/Publications.vue');
+        }
+    },
+    {
+        path: '/:catchAll(.*)',
+        name: 'NotFound',
+        component: function () {
+            return import('../views/NotFound.vue');
         }
     }
 ];
