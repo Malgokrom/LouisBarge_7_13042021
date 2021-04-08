@@ -85,5 +85,7 @@
 </script>
 
 <style scoped lang="scss">
-
+    .inscription {
+        text-align: center;
+    }
 </style>

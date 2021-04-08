@@ -22,6 +22,41 @@ const routes = [
         }
     },
     {
+        path: '/listemembres',
+        name: 'ListeMembres',
+        component: function () {
+            return import('../views/ListeMembres.vue');
+        }
+    },
+    {
+        path: '/preferences',
+        name: 'Preferences',
+        component: function () {
+            return import('../views/Preferences.vue');
+        }
+    },
+    {
+        path: '/membre/:id',
+        name: 'Membre',
+        component: function () {
+            return import('../views/Membre.vue');
+        }
+    },
+    {
+        path: '/profil',
+        name: 'Profil',
+        component: function () {
+            return import('../views/Profil.vue');
+        }
+    },
+    {
+        path: '/reglement',
+        name: 'Reglement',
+        component: function () {
+            return import('../views/Reglement.vue');
+        }
+    },
+    {
         path: '/:catchAll(.*)',
         name: 'NotFound',
         component: function () {

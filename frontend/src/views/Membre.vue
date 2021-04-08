@@ -1,8 +1,8 @@
 <template>
-    <div class="publications">
+    <div class="membre">
         <Vheader />
         <main>
-            <h1>Publications</h1>
+            <h1>Page de présentation du membre : {{ $route.params.id }}</h1>
         </main>
         <Vfooter />
     </div>
@@ -13,7 +13,7 @@
     import Vfooter from '@/components/Vfooter.vue';
 
     export default {
-        name: 'Publications',
+        name: 'Membre',
         components: { Vheader, Vfooter }
     }
 </script>

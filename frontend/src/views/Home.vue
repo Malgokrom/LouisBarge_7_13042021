@@ -24,8 +24,8 @@
         name: 'Home',
         beforeCreate() {
             if (localStorage.getItem('user') && localStorage.getItem('token')) {
-                sessionStorage.setItem('user', localStorage.getItem('user'));
-                sessionStorage.setItem('token', localStorage.getItem('token'));
+                this.$store.commit('setUser', JSON.parse(localStorage.getItem('user')));
+                this.$store.commit('setToken', localStorage.getItem('token'));
                 this.$router.push('/publications');
             }
         },
@@ -45,13 +45,12 @@
                     email: this.email,
                     mdp: this.mdp
                 }).then((response) => {
-                    console.log(response.data);
                     if (this.connexion_auto) {
                         localStorage.setItem('user', JSON.stringify(response.data.user));
                         localStorage.setItem('token', response.data.token);
                     }
-                    sessionStorage.setItem('user', JSON.stringify(response.data.user));
-                    sessionStorage.setItem('token', response.data.token);
+                    this.$store.commit('setUser', response.data.user);
+                    this.$store.commit('setToken', response.data.token);
                     this.$router.push('/publications');
                 }).catch((error) => {
                     this.message_serveur = error.response.data.message;
@@ -62,5 +61,7 @@
 </script>
 
 <style scoped lang="scss">
-
+    .home {
+        text-align: center;
+    }
 </style>

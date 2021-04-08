@@ -1,8 +1,10 @@
 <template>
-    <h1>Erreur 404</h1>
-    <p>
-        Cette page n'existe pas.
-    </p>
+    <div class="not-found">
+        <h1>Erreur 404</h1>
+        <p>
+            Cette page n'existe pas.
+        </p>
+    </div>
 </template>
 
 <script>
@@ -12,5 +14,7 @@
 </script>
 
 <style scoped lang="scss">
-
+    .not-found {
+        text-align: center;
+    }
 </style>

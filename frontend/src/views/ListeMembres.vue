@@ -1,8 +1,8 @@
 <template>
-    <div class="publications">
+    <div class="liste-membres">
         <Vheader />
         <main>
-            <h1>Publications</h1>
+            <h1>Liste des membres</h1>
         </main>
         <Vfooter />
     </div>
@@ -13,7 +13,7 @@
     import Vfooter from '@/components/Vfooter.vue';
 
     export default {
-        name: 'Publications',
+        name: 'ListeMembres',
         components: { Vheader, Vfooter }
     }
 </script>
