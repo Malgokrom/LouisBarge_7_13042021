@@ -58,3 +58,11 @@ exports.login = (req, res, next) => {
         }
     });
 };
+
+exports.getOneMembre = (req, res, next) => {
+    reqdb.recupInfosProfil([req.body.id], (error, result) => {
+        if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+        if (result.length) { return res.status(200).json({ profil: result[0] }); }
+        res.status(500).json({ message: 'Cet utilisateur n\'existe pas.' });
+    });
+};

@@ -5,6 +5,12 @@ export default createStore({
         date_mise_en_service: '2021-01-01',
         url_api: 'http://localhost:3000/api',
         path_avatars: '/images/avatars/',
+        liste_status: [
+            'Employé',
+            'Modérateur',
+            '', '', '', '', '', '', '',
+            'Administrateur'
+        ],
         user: null,
         token: null
     },

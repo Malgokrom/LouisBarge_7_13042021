@@ -80,11 +80,11 @@
                     <div class="search__posts">
                         <div class="search__header">
                             <div class="search__author--exist" v-if="line.id_membres" @click="redirectMembre(line.id_membres)">
-                                <img :src="this.$store.state.path_avatars + line.avatar" alt="Avatar du membre" />
+                                <img :src="$store.state.path_avatars + line.avatar" alt="Avatar du membre" />
                                 {{ line.nom }} {{ line.prenom }}
                             </div>
                             <div class="search__author--no-exist" v-else>
-                                <img :src="this.$store.state.path_avatars + 'suppr.svg'" alt="Profil supprimé" />
+                                <img :src="$store.state.path_avatars + 'suppr.svg'" alt="Profil supprimé" />
                                 profil supprimé
                             </div>
                             <div>{{ line.date_post }}</div>

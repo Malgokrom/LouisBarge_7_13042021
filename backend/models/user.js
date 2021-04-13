@@ -22,3 +22,11 @@ exports.majDerniereConnexion = (data, callback) => {
         WHERE id = ?
     `, data, callback);
 };
+
+exports.recupInfosProfil = (data, callback) => {
+    db.query(`
+        SELECT nom, prenom, email, DATE_FORMAT(date_inscription, '%d/%m/%Y') AS date_inscription, DATE_FORMAT(derniere_connexion, '%d/%m/%Y') AS derniere_connexion, description, avatar, status
+        FROM Membres
+        WHERE id = ?
+    `, data, callback);
+};
