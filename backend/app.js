@@ -1,6 +1,7 @@
 const express = require('express');
 
-const apiRoutes = require('./routes/api');
+const userRoutes = require('./routes/user');
+const messageRoutes = require('./routes/message');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-app.use('/api', apiRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/message', messageRoutes);
 
 module.exports = app;

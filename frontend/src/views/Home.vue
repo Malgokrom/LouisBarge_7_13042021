@@ -41,7 +41,7 @@
             envoyer(e) {
                 e.preventDefault();
                 this.message_serveur = false;
-                axios.post(this.$store.state.url_api + '/login', {
+                axios.post(this.$store.state.url_api + '/user/login', {
                     email: this.email,
                     mdp: this.mdp
                 }).then((response) => {

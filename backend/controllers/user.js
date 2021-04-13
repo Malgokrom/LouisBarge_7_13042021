@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const apiReq = require('../models/api');
+const reqdb = require('../models/user');
 
 exports.signup = (req, res, next) => {
     const regex_nom = /^[-a-zA-ZœçàâäéèêëîïôöùûüŷÿŒÇÀÂÄÉÈÊËÎÏÔÖÙÛÜŶŸ\s]{1,64}$/;
@@ -17,11 +17,9 @@ exports.signup = (req, res, next) => {
             req.body.email,
             hash
         ];
-        apiReq.ajoutMembre(nouv_membre, (error, result) => {
-            if (error) {
-                return res.status(500).json({ message: 'Cet email est déjà utilisé.' });
-            }
-            return res.status(201).json({ message: 'Le compte utilisateur a bien été créé.' });
+        reqdb.ajoutMembre(nouv_membre, (error, result) => {
+            if (error) { return res.status(500).json({ message: 'Cet email est déjà utilisé.' }); }
+            res.status(201).json({ message: 'Le compte utilisateur a bien été créé.' });
         });
     }).catch(() => {
         res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' });
@@ -29,14 +27,12 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    apiReq.recupMembre([req.body.email], (error, result) => {
-        if (error) { console.log(error); }
+    reqdb.recupMembre([req.body.email], (error, result) => {
+        if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
         if (result.length) {
             bcrypt.compare(req.body.mdp, result[0].mdp).then((valid) => {
-                if (!valid) {
-                    return res.status(401).json({ message: 'Le mot de passe est incorrect.' });
-                }
-                apiReq.majDerniereConnexion([result[0].id]);
+                if (!valid) { return res.status(401).json({ message: 'Le mot de passe est incorrect.' }); }
+                reqdb.majDerniereConnexion([result[0].id]);
                 res.status(200).json({
                     user: {
                         id: result[0].id,

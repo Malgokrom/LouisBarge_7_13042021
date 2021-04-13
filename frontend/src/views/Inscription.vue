@@ -67,7 +67,7 @@
                 this.ok_mdp = this.regex_mdp.test(this.mdp);
                 this.ok_mdp2 = this.mdp === this.mdp2;
                 if (this.ok_nom && this.ok_prenom && this.ok_email && this.ok_mdp && this.ok_mdp2) {
-                    axios.post(this.$store.state.url_api + '/signup', {
+                    axios.post(this.$store.state.url_api + '/user/signup', {
                         nom: this.nom,
                         prenom: this.prenom,
                         email: this.email,

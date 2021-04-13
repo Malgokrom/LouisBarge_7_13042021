@@ -23,11 +23,18 @@
             flex-direction: column;
             height: 100%;
             main {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 flex-grow: 1;
+                padding: 0 20px;
             }
         }
     }
     h1 {
         text-align: center;
+    }
+    form {
+        margin: 20px 0;
     }
 </style>
