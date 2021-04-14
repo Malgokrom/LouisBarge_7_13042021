@@ -66,3 +66,25 @@ exports.getOneMembre = (req, res, next) => {
         res.status(500).json({ message: 'Cet utilisateur n\'existe pas.' });
     });
 };
+
+exports.getAllMembres = (req, res, next) => {
+    reqdb.recupMembres((error, result) => {
+        if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+        res.status(200).json({ membres: result });
+    });
+};
+
+exports.get = (req, res, next) => {
+    const tri = req.body.search.tri;
+    const date_apres = req.body.search.date_apres;
+    const date_avant = req.body.search.date_avant;
+    const nom = '%' + req.body.search.nom + '%';
+    const prenom = '%' + req.body.search.prenom + '%';
+    const email = '%' + req.body.search.email + '%';
+    const status = parseInt(req.body.search.status, 10);
+    const data = [ date_apres, date_avant, nom, prenom, email, status, status ];
+    reqdb.searchMembres(data, tri, (error, result) => {
+        if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+        res.status(200).json({ membres: result });
+    });
+};

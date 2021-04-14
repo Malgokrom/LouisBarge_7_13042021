@@ -30,3 +30,25 @@ exports.recupInfosProfil = (data, callback) => {
         WHERE id = ?
     `, data, callback);
 };
+
+exports.recupMembres = (callback) => {
+    db.query(`
+        SELECT id, nom, prenom, email, avatar, status
+        FROM Membres
+        ORDER BY date_inscription DESC
+    `, callback);
+};
+
+exports.searchMembres = (data, tri, callback) => {
+    if (tri !== 'DESC') { tri = 'ASC'; }
+    db.query(`
+        SELECT id, nom, prenom, email, avatar, status
+        FROM Membres
+        WHERE date_inscription BETWEEN ? AND ADDDATE(?, 1)
+            AND nom LIKE ?
+            AND prenom LIKE ?
+            AND email LIKE ?
+            AND (status = ? OR -1 = ?)
+        ORDER BY date_inscription ` + tri
+    , data, callback);
+};

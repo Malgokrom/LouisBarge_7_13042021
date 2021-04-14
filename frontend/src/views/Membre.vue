@@ -30,7 +30,7 @@
                     </tr>
                     <tr>
                         <td>Status :</td>
-                        <td>{{ $store.state.liste_status[profil.status] }}</td>
+                        <td>{{ $store.getters.getStatusTexte(profil.status) }}</td>
                     </tr>
                 </table>
                 <div v-show="profil.description">

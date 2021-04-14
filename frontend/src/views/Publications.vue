@@ -38,31 +38,24 @@
                         <td>
                             <select id="status" v-model="search.status">
                                 <option value="-1" selected>Tous</option>
-                                <option value="0">Employé</option>
-                                <option value="1">Modérateur</option>
-                                <option value="9">Administrateur</option>
+                                <option v-for="status in $store.state.liste_status" :value="status.numero">{{ status.texte }}</option>
                             </select>
                         </td>
                     </tr>
                 </table>
                 <div>Date de publication :</div>
-                <div class="date-post">
-                    <div :class="this.class.avant" @click="showDateAvant">Avant</div>
-                    <div :class="this.class.apres" @click="showDateApres">Après</div>
-                    <div :class="this.class.intervalle" @click="showDateIntervalle">Intervalle</div>
-                </div>
                 <table>
-                    <tr v-show="input_date_avant">
-                        <td>Date max :</td>
-                        <td><input type="date" v-model="search.date_avant" /></td>
-                    </tr>
-                    <tr v-show="input_date_apres">
-                        <td>Date min :</td>
+                    <tr>
+                        <td>entre le :</td>
                         <td><input type="date" v-model="search.date_apres" /></td>
+                    </tr>
+                    <tr>
+                        <td>et le :</td>
+                        <td><input type="date" v-model="search.date_avant" /></td>
                     </tr>
                 </table>
                 <div>
-                    <label for="tri">Trier par date : </label>
+                    <label for="tri">Trier par date de post : </label>
                     <select id="tri" v-model="search.tri" >
                         <option value="DESC" selected>Descendant</option>
                         <option value="ASC">Ascendant</option>
@@ -111,7 +104,20 @@
         name: 'Publications',
         components: { Vheader, Vfooter },
         mounted() {
-            this.recupPosts();
+            axios.post(this.$store.state.url_api + '/message/tous', {
+                user_id: this.$store.state.user.id,
+                user_status: this.$store.state.user.status
+            },
+            {
+                headers: {
+                    authorization: 'token ' + this.$store.state.token
+                }
+            }).then((response) => {
+                this.search.result = response.data.posts;
+                this.search.nb_result = this.search.result.length;
+            }).catch((error) => {
+                alert(error.response.data.message);
+            });
         },
         data() {
             return {
@@ -122,8 +128,6 @@
                     image: null
                 },
                 form_search: false,
-                input_date_avant: true,
-                input_date_apres: false,
                 search: {
                     texte: '',
                     nom: '',
@@ -135,40 +139,10 @@
                     membre_suppr: true,
                     result: [],
                     nb_result: -1
-                },
-                class: {
-                    avant: 'select',
-                    apres: 'no-select',
-                    intervalle: 'no-select'
                 }
             }
         },
         methods: {
-            showDateAvant() {
-                this.input_date_avant = true;
-                this.input_date_apres = false;
-                this.class.avant = 'select';
-                this.class.apres = 'no-select';
-                this.class.intervalle = 'no-select';
-                this.search.date_apres = this.$store.state.date_mise_en_service;
-            },
-            showDateApres() {
-                this.input_date_avant = false;
-                this.input_date_apres = true;
-                this.class.avant = 'no-select';
-                this.class.apres = 'select';
-                this.class.intervalle = 'no-select';
-                this.search.date_avant = this.$store.getters.getDateActu;
-            },
-            showDateIntervalle() {
-                this.input_date_avant = true;
-                this.input_date_apres = true;
-                this.class.avant = 'no-select';
-                this.class.apres = 'no-select';
-                this.class.intervalle = 'select';
-                this.search.date_avant = this.$store.getters.getDateActu;
-                this.search.date_apres = this.$store.state.date_mise_en_service;
-            },
             poster(e) {
                 e.preventDefault();
                 axios.post(this.$store.state.url_api + '/message/post', {
@@ -183,22 +157,6 @@
                 }).then((response) => {
                     alert(response.data.message);
                     this.post.texte = '';
-                }).catch((error) => {
-                    alert(error.response.data.message);
-                });
-            },
-            recupPosts() {
-                axios.post(this.$store.state.url_api + '/message/tous', {
-                    user_id: this.$store.state.user.id,
-                    user_status: this.$store.state.user.status
-                },
-                {
-                    headers: {
-                        authorization: 'token ' + this.$store.state.token
-                    }
-                }).then((response) => {
-                    this.search.result = response.data.posts;
-                    this.search.nb_result = this.search.result.length;
                 }).catch((error) => {
                     alert(error.response.data.message);
                 });
@@ -229,20 +187,6 @@
 </script>
 
 <style scoped lang="scss">
-    .date-post {
-        display: flex;
-        > div {
-            padding: 10px;
-            margin: 10px;
-            &.select {
-                background-color: aqua;
-            }
-            &.no-select {
-                background-color: yellow;
-                cursor: pointer;
-            }
-        }
-    }
     .search {
         background-color: lime;
         margin: 20px 0;

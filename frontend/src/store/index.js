@@ -6,10 +6,9 @@ export default createStore({
         url_api: 'http://localhost:3000/api',
         path_avatars: '/images/avatars/',
         liste_status: [
-            'Employé',
-            'Modérateur',
-            '', '', '', '', '', '', '',
-            'Administrateur'
+            { numero: 0, texte: 'Employé' },
+            { numero: 1, texte: 'Modérateur' },
+            { numero: 9, texte: 'Administrateur' }
         ],
         user: null,
         token: null
@@ -23,6 +22,11 @@ export default createStore({
         },
         getPathAvatar(state) {
             return state.path_avatars + state.user.avatar;
+        },
+        getStatusTexte: (state) => (status) => {
+            for (let i = 0, c = state.liste_status.length; i < c; i++) {
+                if (status === state.liste_status[i].numero) { return state.liste_status[i].texte; }
+            }
         }
     },
     mutations: {
