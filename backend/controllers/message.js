@@ -1,15 +1,16 @@
 const reqdb = require('../models/message');
 
 exports.post = (req, res, next) => {
-    let texte_secure = req.body.post.texte.replace(/</g, '&lt;');
-    texte_secure = texte_secure.replace(/>/g, '&gt;');
-    texte_secure = texte_secure.replace(/\[(\/?(b|i|u|s|sub|sup))\]/gi, '<$1>');
-    texte_secure = texte_secure.replace(/((https?|ftp|ssh):\/\/[a-z0-9\/:%_+.,#?!@&=-]+)/g, '<a href="$1" target="_blank">$1</a>');
-    texte_secure = texte_secure.replace(/\n/g, '<br />');
+    let texte_secure = req.body.texte
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\[(\/?(b|i|u|s|sub|sup))\]/gi, '<$1>')
+    .replace(/((https?|ftp|ssh):\/\/[a-z0-9\/:%_+.,#?!@&=-]+)/g, '<a href="$1" target="_blank">$1</a>')
+    .replace(/\n/g, '<br />');
     const data = [
         req.body.user_id,
         texte_secure,
-        req.body.post.image
+        req.body.image
     ];
     /* Tester si le texte et l'image ne sont pas vides */
     reqdb.ajoutMessage(data, (error, result) => {

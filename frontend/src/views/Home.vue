@@ -5,7 +5,7 @@
             <input type="email" placeholder="email" v-model="email" /><br />
             <input type="password" placeholder="mot de passe" v-model="mdp" /><br />
             <input type="checkbox" id="co_auto" v-model="connexion_auto" /> <label for="co_auto">Connexion automatique</label><br />
-            <button type="submit" @click="envoyer">Se connecter</button>
+            <button type="submit" @click.prevent="envoyer">Se connecter</button>
         </form>
         <p>
             Vous n'avez pas encore de compte ?<br />
@@ -38,13 +38,13 @@
             }
         },
         methods: {
-            envoyer(e) {
-                e.preventDefault();
+            envoyer() {
                 this.message_serveur = false;
                 axios.post(this.$store.state.url_api + '/user/login', {
                     email: this.email,
                     mdp: this.mdp
-                }).then((response) => {
+                })
+                .then((response) => {
                     if (this.connexion_auto) {
                         localStorage.setItem('user', JSON.stringify(response.data.user));
                         localStorage.setItem('token', response.data.token);
@@ -52,7 +52,8 @@
                     this.$store.commit('setUser', response.data.user);
                     this.$store.commit('setToken', response.data.token);
                     this.$router.push('/publications');
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     this.message_serveur = error.response.data.message;
                 });
             }

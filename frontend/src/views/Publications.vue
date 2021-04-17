@@ -9,14 +9,14 @@
                 <!-- Ajouter l'image -->
                 <div @click="infos_bbcode = !infos_bbcode">Utilisation du BBcode :</div>
                 <div v-show="infos_bbcode">
-                    <p>[b]<b>Gras</b>[/b]</p>
-                    <p>[i]<i>Italique</i>[/i]</p>
-                    <p>[u]<u>Souligné</u>[/u]</p>
-                    <p>[s]<s>Barré</s>[/s]</p>
-                    <p>[sub]<sub>Indice</sub>[/sub]</p>
-                    <p>[sup]<sup>Exposant</sup>[/sup]</p>
+                    <p>[b] <b>Gras</b> [/b]</p>
+                    <p>[i] <i>Italique</i> [/i]</p>
+                    <p>[u] <u>Souligné</u> [/u]</p>
+                    <p>[s] <s>Barré</s> [/s]</p>
+                    <p>[sub] <sub>Indice</sub> [/sub]</p>
+                    <p>[sup] <sup>Exposant</sup> [/sup]</p>
                 </div>
-                <button type="submit" @click="poster">Poster</button>
+                <button type="submit" @click.prevent="poster">Poster</button>
             </form>
             <button @click="form_search = !form_search">Rechercher</button>
             <form v-show="form_search">
@@ -65,27 +65,57 @@
                     <input type="checkbox" id="membre-suppr" v-model="search.membre_suppr" />
                     <label for="membre-suppr">Inclure les posts des membres supprimés</label>
                 </div>
-                <button type="submit" @click="rechercher">Rechercher</button>
+                <button type="submit" @click.prevent="rechercher">Rechercher</button>
             </form>
             <div>
                 <h2 v-show="!search.nb_result">Aucun résultat</h2>
                 <div class="search" v-for="line in search.result">
-                    <div class="search__posts">
-                        <div class="search__header">
-                            <div class="search__author--exist" v-if="line.id_membres" @click="redirectMembre(line.id_membres)">
+                    <div class="posts">
+                        <div class="posts__header">
+                            <div class="posts__author--exist" v-if="line.id_membres" @click="redirectMembre(line.id_membres)">
                                 <img :src="$store.state.path_avatars + line.avatar" alt="Avatar du membre" />
                                 {{ line.nom }} {{ line.prenom }}
                             </div>
-                            <div class="search__author--no-exist" v-else>
+                            <div class="posts__author--no-exist" v-else>
                                 <img :src="$store.state.path_avatars + 'suppr.svg'" alt="Profil supprimé" />
                                 profil supprimé
                             </div>
                             <div>{{ line.date_post }}</div>
                         </div>
-                        <div class="search__content" v-html="line.message"></div>
+                        <div class="posts__content" v-html="line.message"></div>
                     </div>
                     <div class="search__comments">
-                        <!-- Ajouter les commentaires -->
+                        <div @click="comment_texte = ''; line.post_comment = !line.post_comment">
+                            Poster un commentaire
+                        </div>
+                        <div v-show="line.post_comment">
+                            <form>
+                                <textarea v-model="comment_texte"></textarea><br />
+                                <button type="submit" @click.prevent="postComment(line.id)">Poster</button>
+                            </form>
+                        </div>
+                        <div @click="if (line.show_comments === 0) { line.num = recupComments(line.id); } line.show_comments = !line.show_comments">
+                            Afficher les commentaires
+                        </div>
+                        <div v-show="line.show_comments">
+                            <div class="comments" v-for="comment in comments[line.num]">
+                                <div class="comments__header">
+                                    <div class="comments__author--exist" v-if="comment.id_membres" @click="redirectMembre(comment.id_membres)">
+                                        <img :src="$store.state.path_avatars + comment.avatar" alt="Avatar du membre" />
+                                        {{ comment.nom }} {{ comment.prenom }}
+                                    </div>
+                                    <div class="comments__author--no-exist" v-else>
+                                        <img :src="$store.state.path_avatars + 'suppr.svg'" alt="Profil supprimé" />
+                                        profil supprimé
+                                    </div>
+                                    <div>{{ comment.date_post }}</div>
+                                </div>
+                                <div class="comments__content" v-html="comment.message"></div>
+                            </div>
+                            <div class="no-comment" v-show="comments[line.num] !== undefined && !comments[line.num].length">
+                                Aucun commentaire
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -107,15 +137,12 @@
             axios.post(this.$store.state.url_api + '/message/tous', {
                 user_id: this.$store.state.user.id,
                 user_status: this.$store.state.user.status
-            },
-            {
-                headers: {
-                    authorization: 'token ' + this.$store.state.token
-                }
-            }).then((response) => {
+            }, this.$store.getters.axiosDefautConfig)
+            .then((response) => {
                 this.search.result = response.data.posts;
                 this.search.nb_result = this.search.result.length;
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 alert(error.response.data.message);
             });
         },
@@ -125,6 +152,7 @@
                 infos_bbcode: false,
                 post: {
                     texte: '',
+                    /* Supprimer image ? */
                     image: null
                 },
                 form_search: false,
@@ -139,45 +167,73 @@
                     membre_suppr: true,
                     result: [],
                     nb_result: -1
-                }
+                },
+                comments: [],
+                num_comment: 0,
+                comment_texte: ''
             }
         },
         methods: {
-            poster(e) {
-                e.preventDefault();
+            poster() {
                 axios.post(this.$store.state.url_api + '/message/post', {
                     user_id: this.$store.state.user.id,
                     user_status: this.$store.state.user.status,
-                    post: this.post
-                },
-                {
-                    headers: {
-                        authorization: 'token ' + this.$store.state.token
-                    }
-                }).then((response) => {
+                    texte: this.post.texte,
+                    image: this.post.image
+                }, this.$store.getters.axiosDefautConfig)
+                .then((response) => {
                     alert(response.data.message);
                     this.post.texte = '';
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     alert(error.response.data.message);
                 });
             },
-            rechercher(e) {
-                e.preventDefault();
+            rechercher() {
                 axios.post(this.$store.state.url_api + '/message/get', {
                     user_id: this.$store.state.user.id,
                     user_status: this.$store.state.user.status,
                     search: this.search
-                },
-                {
-                    headers: {
-                        authorization: 'token ' + this.$store.state.token
-                    }
-                }).then((response) => {
+                }, this.$store.getters.axiosDefautConfig)
+                .then((response) => {
                     this.search.result = response.data.posts;
                     this.search.nb_result = this.search.result.length;
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     alert(error.response.data.message);
                 });
+            },
+            postComment(id_post) {
+                if (!this.comment_texte) { alert('Le commentaire ne doit pas être vide.'); }
+                else {
+                    axios.post(this.$store.state.url_api + '/comment/post', {
+                        user_id: this.$store.state.user.id,
+                        user_status: this.$store.state.user.status,
+                        id_post: id_post,
+                        texte: this.comment_texte
+                    }, this.$store.getters.axiosDefautConfig)
+                    .then((response) => {
+                        alert(response.data.message);
+                    })
+                    .catch((error) => {
+                        alert(error.response.data.message);
+                    });
+                }
+            },
+            recupComments(id_post) {
+                axios.post(this.$store.state.url_api + '/comment/get', {
+                    user_id: this.$store.state.user.id,
+                    user_status: this.$store.state.user.status,
+                    id_post: id_post
+                }, this.$store.getters.axiosDefautConfig)
+                .then((response) => {
+                    this.comments.push(response.data.comments);
+                })
+                .catch((error) => {
+                    alert(error.response.data.message);
+                });
+                this.num_comment++;
+                return this.num_comment - 1;
             },
             redirectMembre(id) {
                 this.$router.push('/membre/' + id);
@@ -188,10 +244,14 @@
 
 <style scoped lang="scss">
     .search {
-        background-color: lime;
         margin: 20px 0;
+        &__comments {
+            background-color: aqua;
+            padding: 10px;
+        }
+    }
+    .posts, .comments {
         &__header {
-            background-color: yellow;
             display: flex;
             justify-content: space-between;
             > div {
@@ -217,5 +277,25 @@
         &__content {
             padding: 10px;
         }
+    }
+    .posts {
+        &__header {
+            background-color: yellow;
+        }
+        &__content {
+            background-color: lime;
+        }
+    }
+    .comments {
+        &__header {
+            background-color: olive;
+        }
+        &__content {
+            background-color: teal;
+        }
+    }
+    .no-comment {
+        background-color: blue;
+        padding: 10px;
     }
 </style>

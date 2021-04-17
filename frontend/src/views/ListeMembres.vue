@@ -46,7 +46,7 @@
                         <option value="ASC">Ascendant</option>
                     </select>
                 </div>
-                <button type="submit" @click="rechercher">Rechercher</button>
+                <button type="submit" @click.prevent="rechercher">Rechercher</button>
             </form>
             <div>
                 <h2 v-show="!search.nb_result">Aucun résultat</h2>
@@ -79,15 +79,12 @@
             axios.post(this.$store.state.url_api + '/user/tous', {
                 user_id: this.$store.state.user.id,
                 user_status: this.$store.state.user.status
-            },
-            {
-                headers: {
-                    authorization: 'token ' + this.$store.state.token
-                }
-            }).then((response) => {
+            }, this.$store.getters.axiosDefautConfig)
+            .then((response) => {
                 this.search.result = response.data.membres;
                 this.search.nb_result = this.search.result.length;
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 alert(error.response.data.message);
             });
         },
@@ -108,21 +105,17 @@
             }
         },
         methods: {
-            rechercher(e) {
-                e.preventDefault();
+            rechercher() {
                 axios.post(this.$store.state.url_api + '/user/get', {
                     user_id: this.$store.state.user.id,
                     user_status: this.$store.state.user.status,
                     search: this.search
-                },
-                {
-                    headers: {
-                        authorization: 'token ' + this.$store.state.token
-                    }
-                }).then((response) => {
+                }, this.$store.getters.axiosDefautConfig)
+                .then((response) => {
                     this.search.result = response.data.membres;
                     this.search.nb_result = this.search.result.length;
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     alert(error.response.data.message);
                 });
             },

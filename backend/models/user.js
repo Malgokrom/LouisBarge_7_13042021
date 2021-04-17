@@ -7,7 +7,7 @@ exports.ajoutMembre = (data, callback) => {
     `, data, callback);
 };
 
-exports.recupMembre = (data, callback) => {
+exports.recupMembreByEmail = (data, callback) => {
     db.query(`
         SELECT *
         FROM Membres
@@ -51,4 +51,27 @@ exports.searchMembres = (data, tri, callback) => {
             AND (status = ? OR -1 = ?)
         ORDER BY date_inscription ` + tri
     , data, callback);
+};
+
+exports.updateMembre = (data, callback) => {
+    db.query(`
+        UPDATE Membres
+        SET nom = ?, prenom = ?, email = ?, mdp = ?, description = ?
+        WHERE id = ?
+    `, data, callback);
+};
+
+exports.deleteMembre = (data, callback) => {
+    db.query(`
+        DELETE FROM Membres
+        WHERE id = ?
+    `, data, callback);
+};
+
+exports.recupMembreById = (data, callback) => {
+    db.query(`
+        SELECT *
+        FROM Membres
+        WHERE id = ?
+    `, data, callback);
 };

@@ -14,6 +14,9 @@ export default createStore({
         token: null
     },
     getters: {
+        axiosDefautConfig(state) {
+            return { headers: { authorization: 'token ' + state.token } };
+        },
         getDateActu() {
             const date_actu = new Date();
             const mois = date_actu.getMonth() < 9 ? '0' + (date_actu.getMonth() + 1) : '' + (date_actu.getMonth() + 1);

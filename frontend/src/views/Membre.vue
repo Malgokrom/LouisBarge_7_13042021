@@ -34,8 +34,8 @@
                     </tr>
                 </table>
                 <div v-show="profil.description">
-                    <div>Description</div>
-                    <div>{{ profil.description }}</div>
+                    <div>Description :</div>
+                    <div v-html="profil.description"></div>
                 </div>
             </div>
         </main>
@@ -57,14 +57,11 @@
                 user_id: this.$store.state.user.id,
                 user_status: this.$store.state.user.status,
                 id: this.$route.params.id
-            },
-            {
-                headers: {
-                    authorization: 'token ' + this.$store.state.token
-                }
-            }).then((response) => {
+            }, this.$store.getters.axiosDefautConfig)
+            .then((response) => {
                 this.profil = response.data.profil;
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 this.message_serveur = error.response.data.message;
             });
         },

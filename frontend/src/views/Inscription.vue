@@ -7,7 +7,7 @@
             <input type="email" placeholder="email" v-model="email" /><br />
             <input type="password" placeholder="mot de passe" v-model="mdp" /><br />
             <input type="password" placeholder="mot de passe" v-model="mdp2" /><br />
-            <button type="submit" @click="envoyer">S'inscrire</button>
+            <button type="submit" @click.prevent="envoyer">S'inscrire</button>
         </form>
         <p>
             Vous avez déjà un compte ?<br />
@@ -58,8 +58,7 @@
             }
         },
         methods: {
-            envoyer(e) {
-                e.preventDefault();
+            envoyer() {
                 this.message_serveur = false;
                 this.ok_nom = this.regex_nom.test(this.nom);
                 this.ok_prenom = this.regex_nom.test(this.prenom);
@@ -72,10 +71,12 @@
                         prenom: this.prenom,
                         email: this.email,
                         mdp: this.mdp
-                    }).then((response) => {
+                    })
+                    .then((response) => {
                         alert(response.data.message);
                         this.$router.push('/');
-                    }).catch((error) => {
+                    })
+                    .catch((error) => {
                         this.message_serveur = error.response.data.message;
                     });
                 }
