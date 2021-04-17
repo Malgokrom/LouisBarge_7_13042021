@@ -7,11 +7,21 @@ exports.ajoutMembre = (data, callback) => {
     `, data, callback);
 };
 
-exports.recupMembreByEmail = (data, callback) => {
+exports.recupInfosLogin = (data, callback) => {
     db.query(`
-        SELECT *
-        FROM Membres
-        WHERE email = ?
+        SELECT m.*, p.texte, p.police
+        FROM Membres AS m
+        INNER JOIN Preferences AS p
+        ON m.id = p.id_membres
+        WHERE m.email = ?
+    `, data, callback);
+};
+
+exports.updatePreferences = (data, callback) => {
+    db.query(`
+        UPDATE Preferences
+        SET texte = ?, police = ?
+        WHERE id_membres = ?
     `, data, callback);
 };
 

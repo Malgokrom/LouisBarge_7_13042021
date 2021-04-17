@@ -27,7 +27,7 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    reqdb.recupMembreByEmail([req.body.email], (error, result) => {
+    reqdb.recupInfosLogin([req.body.email], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
         if (result.length) {
             bcrypt.compare(req.body.mdp, result[0].mdp).then((valid) => {
@@ -45,6 +45,10 @@ exports.login = (req, res, next) => {
                         avatar: result[0].avatar,
                         status: result[0].status
                     },
+                    preferences: {
+                        texte: result[0].texte,
+                        police: result[0].police
+                    },
                     token: jwt.sign(
                         { user_id: result[0].id,
                         user_status: result[0].status },
@@ -56,6 +60,18 @@ exports.login = (req, res, next) => {
         } else {
             res.status(401).json({ message: 'Ce compte utilisateur n\'existe pas.' });
         }
+    });
+};
+
+exports.updatePreferences = (req, res, next) => {
+    const new_pref = [
+        req.body.texte,
+        req.body.police,
+        req.body.user_id
+    ];
+    reqdb.updatePreferences(new_pref, (error, result) => {
+        if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+        res.status(200).json({ message: 'Vos préférences ont bien été sauvegardé.' });
     });
 };
 

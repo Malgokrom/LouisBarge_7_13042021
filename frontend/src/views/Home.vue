@@ -31,6 +31,7 @@
         },
         data() {
             return {
+                body: document.getElementsByTagName('body')[0],
                 email: '',
                 mdp: '',
                 connexion_auto: false,
@@ -51,6 +52,9 @@
                     }
                     this.$store.commit('setUser', response.data.user);
                     this.$store.commit('setToken', response.data.token);
+                    this.$store.commit('preferencesAll', response.data.preferences);
+                    this.body.style.fontSize = this.$store.state.preferences.texte;
+                    this.body.style.fontFamily = this.$store.state.preferences.police;
                     this.$router.push('/publications');
                 })
                 .catch((error) => {

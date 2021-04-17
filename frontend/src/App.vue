@@ -9,12 +9,27 @@
 </script>
 
 <style lang="scss">
+    @font-face {
+        font-family: "roboto";
+        src: url("../public/polices//Roboto-Regular.ttf");
+    }
+    @font-face {
+        font-family: "g731";
+        src: url("../public/polices/G731-script-regular.ttf");
+    }
+    * {
+        box-sizing: border-box;
+    }
     html, body {
         height: 100%;
     }
     body {
         background-color: #C0C0C0;
+        font-family: "roboto";
         margin: 0;
+    }
+    figure {
+        line-height: 0;
     }
     #app {
         height: 100%;
@@ -30,11 +45,5 @@
                 padding: 0 20px;
             }
         }
-    }
-    h1 {
-        text-align: center;
-    }
-    form {
-        margin: 20px 0;
     }
 </style>

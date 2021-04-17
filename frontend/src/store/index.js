@@ -10,6 +10,7 @@ export default createStore({
             { numero: 1, texte: 'Modérateur' },
             { numero: 9, texte: 'Administrateur' }
         ],
+        preferences: {},
         user: null,
         token: null
     },
@@ -33,12 +34,11 @@ export default createStore({
         }
     },
     mutations: {
-        setUser(state, user) {
-            state.user = user;
-        },
-        setToken(state, token) {
-            state.token = token;
-        }
+        setUser(state, user) { state.user = user; },
+        setToken(state, token) { state.token = token; },
+        preferencesAll(state, all) { state.preferences = all; },
+        preferencesTexte(state, texte) { state.preferences.texte = texte; },
+        preferencesPolice(state, police) { state.preferences.police = police; }
     },
     actions: {
     },
