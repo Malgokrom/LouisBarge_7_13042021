@@ -1,15 +1,10 @@
 const reqdb = require('../models/comments');
+const reg = require('../modules/regex');
 
 exports.post = (req, res, next) => {
     let texte_secure;
-    if (req.body.texte) {
-        texte_secure = req.body.texte
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\[(\/?(b|i|u|s|sub|sup))\]/gi, '<$1>')
-        .replace(/((https?|ftp|ssh):\/\/[a-z0-9\/:%_+.,#?!@&=-]+)/g, '<a href="$1" target="_blank">$1</a>')
-        .replace(/\n/g, '<br />');
-    } else { return res.status(500).json({ message: 'Le commentaire ne doit pas être vide.' }); }
+    if (req.body.texte) { texte_secure = reg.bbcode(req.body.texte); }
+    else { return res.status(500).json({ message: 'Le commentaire ne doit pas être vide.' }); }
     const data = [
         req.body.user_id,
         req.body.id_post,

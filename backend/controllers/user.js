@@ -1,13 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const reg = require('../modules/regex');
 const reqdb = require('../models/user');
 
 exports.signup = (req, res, next) => {
-    const regex_nom = /^[-a-zA-ZœçàâäéèêëîïôöùûüŷÿŒÇÀÂÄÉÈÊËÎÏÔÖÙÛÜŶŸ\s]{1,64}$/;
-    const regex_email = /^[-._a-zA-Z0-9]+@[-._a-zA-Z0-9]+\.[a-zA-Z]{2,5}$/;
-    const regex_mdp = /^.{8,64}$/;
-    if (!regex_nom.test(req.body.nom) || !regex_nom.test(req.body.prenom) || !regex_email.test(req.body.email) || !regex_mdp.test(req.body.mdp)) {
+    if (!reg.nom.test(req.body.nom) || !reg.nom.test(req.body.prenom) || !reg.email.test(req.body.email) || !reg.mdp.test(req.body.mdp)) {
         return res.status(500).json({ message: 'Les données reçues par le serveur sont invalides.' });
     }
     bcrypt.hash(req.body.mdp, 10).then((hash) => {
@@ -116,25 +114,14 @@ exports.updateMembre = (req, res, next) => {
             if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
             bcrypt.compare(req.body.old_mdp, result[0].mdp).then((valid) => {
                 if (!valid) { return res.status(401).json({ message: 'Le mot de passe est incorrect.' }); }
-                const regex_nom = /^[-a-zA-ZœçàâäéèêëîïôöùûüŷÿŒÇÀÂÄÉÈÊËÎÏÔÖÙÛÜŶŸ\s]{1,64}$/;
-                const regex_email = /^[-._a-zA-Z0-9]+@[-._a-zA-Z0-9]+\.[a-zA-Z]{2,5}$/;
-                const regex_mdp = /^.{8,64}$/;
                 const new_nom = req.body.nom ? req.body.nom : result[0].nom;
                 const new_prenom = req.body.prenom ? req.body.prenom : result[0].prenom;
                 const new_email = req.body.email ? req.body.email : result[0].email;
                 const new_mdp = req.body.new_mdp ? req.body.new_mdp : '';
-                if (!regex_nom.test(new_nom) || !regex_nom.test(new_prenom) || !regex_email.test(new_email) || (new_mdp && !regex_mdp.test(new_mdp))) {
+                if (!reg.nom.test(new_nom) || !reg.nom.test(new_prenom) || !reg.email.test(new_email) || (new_mdp && !reg.mdp.test(new_mdp))) {
                     return res.status(500).json({ message: 'Les données reçues par le serveur sont invalides.' });
                 }
-                let new_description;
-                if (req.body.description) {
-                    new_description = req.body.description
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/\[(\/?(b|i|u|s|sub|sup))\]/gi, '<$1>')
-                    .replace(/((https?|ftp|ssh):\/\/[a-z0-9\/:%_+.,#?!@&=-]+)/g, '<a href="$1" target="_blank">$1</a>')
-                    .replace(/\n/g, '<br />');
-                } else { new_description = result[0].description; }
+                const new_description = req.body.description ? reg.bbcode(req.body.description) : result[0].description;
                 if (new_mdp) {
                     bcrypt.hash(new_mdp, 10).then((hash) => {
                         const new_data = [ new_nom, new_prenom, new_email, hash, new_description, req.body.user_id ];

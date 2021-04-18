@@ -1,12 +1,8 @@
 const reqdb = require('../models/message');
+const reg = require('../modules/regex');
 
 exports.post = (req, res, next) => {
-    let texte_secure = req.body.texte
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\[(\/?(b|i|u|s|sub|sup))\]/gi, '<$1>')
-    .replace(/((https?|ftp|ssh):\/\/[a-z0-9\/:%_+.,#?!@&=-]+)/g, '<a href="$1" target="_blank">$1</a>')
-    .replace(/\n/g, '<br />');
+    let texte_secure = reg.bbcode(req.body.texte);
     const data = [
         req.body.user_id,
         texte_secure,
