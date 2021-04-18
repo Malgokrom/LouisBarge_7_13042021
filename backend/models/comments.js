@@ -9,11 +9,28 @@ exports.ajoutComment = (data, callback) => {
 
 exports.recupComments = (data, callback) => {
     db.query(`
-        SELECT c.id_membres, DATE_FORMAT(c.date_post, '%d/%m/%Y %H:%i:%s') AS date_post, c.message, m.nom, m.prenom, m.avatar
+        SELECT 1 AS show_comment, c.id, c.id_membres, DATE_FORMAT(c.date_post, '%d/%m/%Y %H:%i:%s') AS date_post, c.message, m.nom, m.prenom, m.avatar, m.status
         FROM Commentaires AS c
         LEFT JOIN Membres AS m
         ON c.id_membres = m.id
-        WHERE id_posts = ?
+        WHERE c.id_posts = ?
         ORDER BY c.date_post DESC
+    `, data, callback);
+};
+
+exports.recupStatusAuteur = (data, callback) => {
+    db.query(`
+        SELECT m.status
+        FROM Membres AS m
+        INNER JOIN Commentaires AS c
+        ON m.id = c.id_membres
+        WHERE c.id = ?
+    `, data, callback);
+};
+
+exports.deleteComment = (data, callback) => {
+    db.query(`
+        DELETE FROM Commentaires
+        WHERE id = ?
     `, data, callback);
 };

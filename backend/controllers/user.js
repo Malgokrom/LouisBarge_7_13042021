@@ -118,7 +118,6 @@ exports.setStatus = (req, res, next) => {
     }
 };
 
-/* EN COURS */
 exports.deleteMembre = (req, res, next) => {
     if (req.body.user_status === 9) {
         reqdb.deleteMembre([req.body.id], (error, result) => {

@@ -70,50 +70,66 @@
             <div>
                 <h2 v-show="!search.nb_result">Aucun résultat</h2>
                 <div class="search" v-for="line in search.result">
-                    <div class="posts">
-                        <div class="posts__header">
-                            <div class="posts__author--exist" v-if="line.id_membres" @click="redirectMembre(line.id_membres)">
-                                <img :src="$store.state.path_avatars + line.avatar" alt="Avatar du membre" />
-                                {{ line.nom }} {{ line.prenom }}
-                            </div>
-                            <div class="posts__author--no-exist" v-else>
-                                <img :src="$store.state.path_avatars + 'suppr.svg'" alt="Profil supprimé" />
-                                profil supprimé
-                            </div>
-                            <div>{{ line.date_post }}</div>
-                        </div>
-                        <div class="posts__content" v-html="line.message"></div>
-                    </div>
-                    <div class="search__comments">
-                        <div @click="comment_texte = ''; line.post_comment = !line.post_comment">
-                            Poster un commentaire
-                        </div>
-                        <div v-show="line.post_comment">
-                            <form>
-                                <textarea v-model="comment_texte"></textarea><br />
-                                <button type="submit" @click.prevent="postComment(line.id)">Poster</button>
-                            </form>
-                        </div>
-                        <div @click="if (line.show_comments === 0) { line.num = recupComments(line.id); } line.show_comments = !line.show_comments">
-                            Afficher les commentaires
-                        </div>
-                        <div v-show="line.show_comments">
-                            <div class="comments" v-for="comment in comments[line.num]">
-                                <div class="comments__header">
-                                    <div class="comments__author--exist" v-if="comment.id_membres" @click="redirectMembre(comment.id_membres)">
-                                        <img :src="$store.state.path_avatars + comment.avatar" alt="Avatar du membre" />
-                                        {{ comment.nom }} {{ comment.prenom }}
-                                    </div>
-                                    <div class="comments__author--no-exist" v-else>
-                                        <img :src="$store.state.path_avatars + 'suppr.svg'" alt="Profil supprimé" />
-                                        profil supprimé
-                                    </div>
-                                    <div>{{ comment.date_post }}</div>
+                    <div v-show="line.show_post">
+                        <div class="posts">
+                            <div class="posts__header">
+                                <div class="posts__author--exist" v-if="line.id_membres" @click="redirectMembre(line.id_membres)">
+                                    <img :src="$store.state.path_avatars + line.avatar" alt="Avatar du membre" />
+                                    {{ line.nom }} {{ line.prenom }}
                                 </div>
-                                <div class="comments__content" v-html="comment.message"></div>
+                                <div class="posts__author--no-exist" v-else>
+                                    <img :src="$store.state.path_avatars + 'suppr.svg'" alt="Profil supprimé" />
+                                    profil supprimé
+                                </div>
+                                <div>{{ line.date_post }}</div>
                             </div>
-                            <div class="no-comment" v-show="comments[line.num] !== undefined && !comments[line.num].length">
-                                Aucun commentaire
+                            <div class="posts__opt">
+                                <figure v-if="$store.state.user.status === line.status || $store.state.user.status === 9 || ($store.state.user.status === 1 && line.status !== 9)" @click="supprMessage(line.id); line.show_post = false">
+                                    <img :src="$store.state.path_icones + 'trash-alt.svg'" alt="Supprimer le post" />
+                                </figure>
+                            </div>
+                            <div class="posts__content" v-html="line.message"></div>
+                        </div>
+                        <div class="search__comments">
+                            <div @click="comment_texte = ''; line.post_comment = !line.post_comment">
+                                Poster un commentaire
+                            </div>
+                            <div v-show="line.post_comment">
+                                <form>
+                                    <textarea v-model="comment_texte"></textarea><br />
+                                    <button type="submit" @click.prevent="postComment(line.id)">Poster</button>
+                                </form>
+                            </div>
+                            <div @click="if (line.show_comments === 0) { line.num = recupComments(line.id); } line.show_comments = !line.show_comments">
+                                Afficher les commentaires
+                            </div>
+                            <div v-show="line.show_comments">
+                                <div v-for="comment in comments[line.num]">
+                                    <div class="comments">
+                                        <div v-show="comment.show_comment">
+                                            <div class="comments__header">
+                                                <div class="comments__author--exist" v-if="comment.id_membres" @click="redirectMembre(comment.id_membres)">
+                                                    <img :src="$store.state.path_avatars + comment.avatar" alt="Avatar du membre" />
+                                                    {{ comment.nom }} {{ comment.prenom }}
+                                                </div>
+                                                <div class="comments__author--no-exist" v-else>
+                                                    <img :src="$store.state.path_avatars + 'suppr.svg'" alt="Profil supprimé" />
+                                                    profil supprimé
+                                                </div>
+                                                <div>{{ comment.date_post }}</div>
+                                            </div>
+                                            <div class="comments__opt">
+                                                <figure v-if="$store.state.user.status === comment.status || $store.state.user.status === 9 || ($store.state.user.status === 1 && comment.status !== 9)" @click="supprComment(comment.id); comment.show_comment = false">
+                                                    <img :src="$store.state.path_icones + 'trash-alt.svg'" alt="Supprimer le post" />
+                                                </figure>
+                                            </div>
+                                            <div class="comments__content" v-html="comment.message"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="no-comment" v-show="comments[line.num] !== undefined && !comments[line.num].length">
+                                    Aucun commentaire
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -235,6 +251,32 @@
                 this.num_comment++;
                 return this.num_comment - 1;
             },
+            supprMessage(id_post) {
+                axios.post(this.$store.state.url_api + '/message/delete', {
+                    user_id: this.$store.state.user.id,
+                    user_status: this.$store.state.user.status,
+                    id_post: id_post
+                }, this.$store.getters.axiosDefautConfig)
+                .then((response) => {
+                    alert(response.data.message);
+                })
+                .catch((error) => {
+                    alert(error.response.data.message);
+                });
+            },
+            supprComment(id_comment) {
+                axios.post(this.$store.state.url_api + '/comment/delete', {
+                    user_id: this.$store.state.user.id,
+                    user_status: this.$store.state.user.status,
+                    id_comment: id_comment
+                }, this.$store.getters.axiosDefautConfig)
+                .then((response) => {
+                    alert(response.data.message);
+                })
+                .catch((error) => {
+                    alert(error.response.data.message);
+                });
+            },
             redirectMembre(id) {
                 this.$router.push('/membre/' + id);
             }
@@ -266,6 +308,18 @@
                 }
             }
         }
+        &__opt {
+            display: flex;
+            justify-content: flex-end;
+            figure {
+                padding: 5px;
+                margin: 0;
+                img {
+                    height: 25px;
+                    cursor: pointer;
+                }
+            }
+        }
         &__author {
             &--exist {
                 cursor: pointer;
@@ -282,13 +336,20 @@
         &__header {
             background-color: yellow;
         }
+        &__opt {
+            background-color: orange;
+        }
         &__content {
             background-color: lime;
         }
     }
     .comments {
+        margin-top: 10px;
         &__header {
             background-color: olive;
+        }
+        &__opt {
+            background-color: olivedrab;
         }
         &__content {
             background-color: teal;
