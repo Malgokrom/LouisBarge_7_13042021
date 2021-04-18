@@ -33,6 +33,14 @@ exports.majDerniereConnexion = (data, callback) => {
     `, data, callback);
 };
 
+exports.majStatus = (data, callback) => {
+    db.query(`
+        UPDATE Membres
+        SET status = ?
+        WHERE id = ?
+    `, data, callback);
+};
+
 exports.recupInfosProfil = (data, callback) => {
     db.query(`
         SELECT nom, prenom, email, DATE_FORMAT(date_inscription, '%d/%m/%Y') AS date_inscription, DATE_FORMAT(derniere_connexion, '%d/%m/%Y') AS derniere_connexion, description, avatar, status

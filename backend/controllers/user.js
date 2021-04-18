@@ -103,17 +103,44 @@ exports.get = (req, res, next) => {
     });
 };
 
-exports.updateMembre = (req, res, next) => {
-    if (req.body.supprimer) {
-        reqdb.deleteMembre([req.body.user_id], (error, result) => {
+exports.setStatus = (req, res, next) => {
+    if (req.body.user_status === 9) {
+        const data = [
+            req.body.status,
+            req.body.id
+        ];
+        reqdb.majStatus(data, (error, result) => {
             if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
-            res.status(200).json({ message: 'Votre compte a bien été supprimé.' });
+            res.status(200).json({ message: 'Le status du membre a bien été modifié.' });
         });
     } else {
-        reqdb.recupMembreById([req.body.user_id], (error, result) => {
+        res.status(401).json({ message: 'Vous n\'avez pas l\'autorisation de modifier le status d\'un membre.' });
+    }
+};
+
+/* EN COURS */
+exports.deleteMembre = (req, res, next) => {
+    if (req.body.user_status === 9) {
+        reqdb.deleteMembre([req.body.id], (error, result) => {
             if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
-            bcrypt.compare(req.body.old_mdp, result[0].mdp).then((valid) => {
-                if (!valid) { return res.status(401).json({ message: 'Le mot de passe est incorrect.' }); }
+            res.status(200).json({ message: 'Le profil a bien été supprimé.' });
+        });
+    } else {
+        res.status(401).json({ message: 'Vous n\'avez pas l\'autorisation de supprimer un profil.' });
+    }
+};
+
+exports.updateMembre = (req, res, next) => {
+    reqdb.recupMembreById([req.body.user_id], (error, result) => {
+        if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+        bcrypt.compare(req.body.old_mdp, result[0].mdp).then((valid) => {
+            if (!valid) { return res.status(401).json({ message: 'Le mot de passe est incorrect.' }); }
+            if (req.body.supprimer) {
+                reqdb.deleteMembre([req.body.user_id], (error, result) => {
+                    if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+                    res.status(200).json({ message: 'Votre compte a bien été supprimé.' });
+                });
+            } else {
                 const new_nom = req.body.nom ? req.body.nom : result[0].nom;
                 const new_prenom = req.body.prenom ? req.body.prenom : result[0].prenom;
                 const new_email = req.body.email ? req.body.email : result[0].email;
@@ -171,7 +198,7 @@ exports.updateMembre = (req, res, next) => {
                         });
                     });
                 }
-            });
+            }
         });
-    }
+    });
 };

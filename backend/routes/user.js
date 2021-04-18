@@ -13,5 +13,7 @@ router.post('/membre', auth, userCtrl.getOneMembre);
 router.post('/tous', auth, userCtrl.getAllMembres);
 router.post('/get', auth, userCtrl.get);
 router.put('/update', auth, userCtrl.updateMembre);
+router.put('/status', auth, userCtrl.setStatus);
+router.post('/delete', auth, userCtrl.deleteMembre);
 
 module.exports = router;
