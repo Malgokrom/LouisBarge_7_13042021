@@ -24,7 +24,7 @@
         height: 100%;
     }
     body {
-        background-color: #C0C0C0;
+        background-color: #D0D0FF;
         font-family: "roboto";
         margin: 0;
     }
