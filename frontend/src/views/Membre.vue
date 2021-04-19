@@ -58,11 +58,12 @@
         name: 'Membre',
         components: { Vheader, Vfooter },
         mounted() {
-            axios.post(this.$store.state.url_api + '/user/membre', {
-                user_id: this.$store.state.user.id,
-                user_status: this.$store.state.user.status,
-                id: this.$route.params.id
-            }, this.$store.getters.axiosDefautConfig)
+            axios.get(this.$store.state.url_api + '/user/' + this.$route.params.id, {
+                params: {
+                    user_id: this.$store.state.user.id,
+                    user_status: this.$store.state.user.status
+                }, ...this.$store.getters.axiosDefautConfig
+            })
             .then((response) => {
                 this.profil = response.data.profil;
             })
@@ -93,11 +94,12 @@
                 });
             },
             supprProfil() {
-                axios.post(this.$store.state.url_api + '/user/delete', {
-                    user_id: this.$store.state.user.id,
-                    user_status: this.$store.state.user.status,
-                    id: this.$route.params.id,
-                }, this.$store.getters.axiosDefautConfig)
+                axios.delete(this.$store.state.url_api + '/user/' + this.$route.params.id, {
+                    data: {
+                        user_id: this.$store.state.user.id,
+                        user_status: this.$store.state.user.status
+                    }, ...this.$store.getters.axiosDefautConfig
+                })
                 .then((response) => {
                     alert(response.data.message);
                     this.$router.push('/listemembres');

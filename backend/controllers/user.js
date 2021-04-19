@@ -25,10 +25,10 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    reqdb.recupInfosLogin([req.body.email], (error, result) => {
+    reqdb.recupInfosLogin([req.query.email], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
         if (result.length) {
-            bcrypt.compare(req.body.mdp, result[0].mdp).then((valid) => {
+            bcrypt.compare(req.query.mdp, result[0].mdp).then((valid) => {
                 if (!valid) { return res.status(401).json({ message: 'Le mot de passe est incorrect.' }); }
                 reqdb.majDerniereConnexion([result[0].id]);
                 res.status(200).json({
@@ -74,7 +74,7 @@ exports.updatePreferences = (req, res, next) => {
 };
 
 exports.getOneMembre = (req, res, next) => {
-    reqdb.recupInfosProfil([req.body.id], (error, result) => {
+    reqdb.recupInfosProfil([parseInt(req.params.idmembre, 10)], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
         if (result.length) { return res.status(200).json({ profil: result[0] }); }
         res.status(500).json({ message: 'Cet utilisateur n\'existe pas.' });
@@ -88,14 +88,14 @@ exports.getAllMembres = (req, res, next) => {
     });
 };
 
-exports.get = (req, res, next) => {
-    const tri = req.body.search.tri;
-    const date_apres = req.body.search.date_apres;
-    const date_avant = req.body.search.date_avant;
-    const nom = '%' + req.body.search.nom + '%';
-    const prenom = '%' + req.body.search.prenom + '%';
-    const email = '%' + req.body.search.email + '%';
-    const status = parseInt(req.body.search.status, 10);
+exports.searchMembres = (req, res, next) => {
+    const tri = req.query.tri;
+    const date_apres = req.query.date_apres;
+    const date_avant = req.query.date_avant;
+    const nom = '%' + req.query.nom + '%';
+    const prenom = '%' + req.query.prenom + '%';
+    const email = '%' + req.query.email + '%';
+    const status = parseInt(req.query.status, 10);
     const data = [ date_apres, date_avant, nom, prenom, email, status, status ];
     reqdb.searchMembres(data, tri, (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
@@ -120,7 +120,7 @@ exports.setStatus = (req, res, next) => {
 
 exports.deleteMembre = (req, res, next) => {
     if (req.body.user_status === 9) {
-        reqdb.deleteMembre([req.body.id], (error, result) => {
+        reqdb.deleteMembre([req.params.idmembre], (error, result) => {
             if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
             res.status(200).json({ message: 'Le profil a bien été supprimé.' });
         });

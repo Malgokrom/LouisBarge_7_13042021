@@ -1,13 +1,13 @@
 const reqdb = require('../models/comments');
 const reg = require('../modules/regex');
 
-exports.post = (req, res, next) => {
+exports.postComment = (req, res, next) => {
     let texte_secure;
     if (req.body.texte) { texte_secure = reg.bbcode(req.body.texte); }
     else { return res.status(500).json({ message: 'Le commentaire ne doit pas être vide.' }); }
     const data = [
         req.body.user_id,
-        req.body.id_post,
+        parseInt(req.params.idpost, 10),
         texte_secure,
     ];
     reqdb.ajoutComment(data, (error, result) => {
@@ -16,8 +16,8 @@ exports.post = (req, res, next) => {
     });
 };
 
-exports.get = (req, res, next) => {
-    reqdb.recupComments([req.body.id_post], (error, result) => {
+exports.getComments = (req, res, next) => {
+    reqdb.recupComments([parseInt(req.params.idpost, 10)], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
         res.status(200).json({ comments: result });
     });
@@ -25,7 +25,7 @@ exports.get = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
     const user_status = req.body.user_status;
-    const id_comment = req.body.id_comment;
+    const id_comment = parseInt(req.params.idcomment, 10);
     reqdb.recupStatusAuteur([id_comment], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
         const auteur_status = result.length ? result[0].status : -1;

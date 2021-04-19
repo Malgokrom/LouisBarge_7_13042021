@@ -7,13 +7,13 @@ const auth = require('../middlewares/auth');
 const router = express.Router();
 
 router.post('/signup', userCtrl.signup);
-router.post('/login', userCtrl.login);
+router.get('/login', userCtrl.login);
+router.get('/all', auth, userCtrl.getAllMembres);
+router.get('/search', auth, userCtrl.searchMembres);
+router.get('/:idmembre', auth, userCtrl.getOneMembre);
 router.put('/preferences', userCtrl.updatePreferences);
-router.post('/membre', auth, userCtrl.getOneMembre);
-router.post('/tous', auth, userCtrl.getAllMembres);
-router.post('/get', auth, userCtrl.get);
 router.put('/update', auth, userCtrl.updateMembre);
 router.put('/status', auth, userCtrl.setStatus);
-router.post('/delete', auth, userCtrl.deleteMembre);
+router.delete('/:idmembre', auth, userCtrl.deleteMembre);
 
 module.exports = router;

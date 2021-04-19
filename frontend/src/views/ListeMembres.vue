@@ -49,8 +49,8 @@
                 <button type="submit" @click.prevent="rechercher">Rechercher</button>
             </form>
             <div>
-                <h2 v-show="!search.nb_result">Aucun résultat</h2>
-                <div class="search" v-for="line in search.result" @click="redirectMembre(line.id)">
+                <h2 v-show="!search_nb_result">Aucun résultat</h2>
+                <div class="search" v-for="line in search_result" @click="redirectMembre(line.id)">
                     <figure class="search__avatar">
                         <img :src="$store.state.path_avatars + line.avatar" alt="Avatar du membre" />
                     </figure>
@@ -76,13 +76,15 @@
         name: 'ListeMembres',
         components: { Vheader, Vfooter },
         mounted() {
-            axios.post(this.$store.state.url_api + '/user/tous', {
-                user_id: this.$store.state.user.id,
-                user_status: this.$store.state.user.status
-            }, this.$store.getters.axiosDefautConfig)
+            axios.get(this.$store.state.url_api + '/user/all', {
+                params: {
+                    user_id: this.$store.state.user.id,
+                    user_status: this.$store.state.user.status
+                }, ...this.$store.getters.axiosDefautConfig
+            })
             .then((response) => {
-                this.search.result = response.data.membres;
-                this.search.nb_result = this.search.result.length;
+                this.search_result = response.data.membres;
+                this.search_nb_result = this.search_result.length;
             })
             .catch((error) => {
                 alert(error.response.data.message);
@@ -91,6 +93,8 @@
         data() {
             return {
                 form_search: false,
+                search_result: [],
+                search_nb_result: -1,
                 search: {
                     nom: '',
                     prenom: '',
@@ -98,22 +102,22 @@
                     status: '-1',
                     date_avant: this.$store.getters.getDateActu,
                     date_apres: this.$store.state.date_mise_en_service,
-                    tri: 'DESC',
-                    result: [],
-                    nb_result: -1
+                    tri: 'DESC'
                 }
             }
         },
         methods: {
             rechercher() {
-                axios.post(this.$store.state.url_api + '/user/get', {
-                    user_id: this.$store.state.user.id,
-                    user_status: this.$store.state.user.status,
-                    search: this.search
-                }, this.$store.getters.axiosDefautConfig)
+                axios.get(this.$store.state.url_api + '/user/search', {
+                    params: {
+                        user_id: this.$store.state.user.id,
+                        user_status: this.$store.state.user.status,
+                        ...this.search
+                    }, ...this.$store.getters.axiosDefautConfig
+                })
                 .then((response) => {
-                    this.search.result = response.data.membres;
-                    this.search.nb_result = this.search.result.length;
+                    this.search_result = response.data.membres;
+                    this.search_nb_result = this.search_result.length;
                 })
                 .catch((error) => {
                     alert(error.response.data.message);

@@ -68,8 +68,8 @@
                 <button type="submit" @click.prevent="rechercher">Rechercher</button>
             </form>
             <div>
-                <h2 v-show="!search.nb_result">Aucun résultat</h2>
-                <div class="search" v-for="line in search.result">
+                <h2 v-show="!search_nb_result">Aucun résultat</h2>
+                <div class="search" v-for="line in search_result">
                     <div v-show="line.show_post">
                         <div class="posts">
                             <div class="posts__header">
@@ -150,13 +150,15 @@
         name: 'Publications',
         components: { Vheader, Vfooter },
         mounted() {
-            axios.post(this.$store.state.url_api + '/message/tous', {
-                user_id: this.$store.state.user.id,
-                user_status: this.$store.state.user.status
-            }, this.$store.getters.axiosDefautConfig)
+            axios.get(this.$store.state.url_api + '/message/all', {
+                params: {
+                    user_id: this.$store.state.user.id,
+                    user_status: this.$store.state.user.status
+                }, ...this.$store.getters.axiosDefautConfig
+            })
             .then((response) => {
-                this.search.result = response.data.posts;
-                this.search.nb_result = this.search.result.length;
+                this.search_result = response.data.posts;
+                this.search_nb_result = this.search_result.length;
             })
             .catch((error) => {
                 alert(error.response.data.message);
@@ -172,6 +174,8 @@
                     image: null
                 },
                 form_search: false,
+                search_result: [],
+                search_nb_result: -1,
                 search: {
                     texte: '',
                     nom: '',
@@ -180,9 +184,7 @@
                     date_avant: this.$store.getters.getDateActu,
                     date_apres: this.$store.state.date_mise_en_service,
                     tri: 'DESC',
-                    membre_suppr: true,
-                    result: [],
-                    nb_result: -1
+                    membre_suppr: true
                 },
                 comments: [],
                 num_comment: 0,
@@ -206,14 +208,16 @@
                 });
             },
             rechercher() {
-                axios.post(this.$store.state.url_api + '/message/get', {
-                    user_id: this.$store.state.user.id,
-                    user_status: this.$store.state.user.status,
-                    search: this.search
-                }, this.$store.getters.axiosDefautConfig)
+                axios.get(this.$store.state.url_api + '/message/search', {
+                    params: {
+                        user_id: this.$store.state.user.id,
+                        user_status: this.$store.state.user.status,
+                        ...this.search
+                    }, ...this.$store.getters.axiosDefautConfig
+                })
                 .then((response) => {
-                    this.search.result = response.data.posts;
-                    this.search.nb_result = this.search.result.length;
+                    this.search_result = response.data.posts;
+                    this.search_nb_result = this.search_result.length;
                 })
                 .catch((error) => {
                     alert(error.response.data.message);
@@ -222,10 +226,9 @@
             postComment(id_post) {
                 if (!this.comment_texte) { alert('Le commentaire ne doit pas être vide.'); }
                 else {
-                    axios.post(this.$store.state.url_api + '/comment/post', {
+                    axios.post(this.$store.state.url_api + '/comment/' + id_post, {
                         user_id: this.$store.state.user.id,
                         user_status: this.$store.state.user.status,
-                        id_post: id_post,
                         texte: this.comment_texte
                     }, this.$store.getters.axiosDefautConfig)
                     .then((response) => {
@@ -237,11 +240,12 @@
                 }
             },
             recupComments(id_post) {
-                axios.post(this.$store.state.url_api + '/comment/get', {
-                    user_id: this.$store.state.user.id,
-                    user_status: this.$store.state.user.status,
-                    id_post: id_post
-                }, this.$store.getters.axiosDefautConfig)
+                axios.get(this.$store.state.url_api + '/comment/' + id_post, {
+                    params: {
+                        user_id: this.$store.state.user.id,
+                        user_status: this.$store.state.user.status
+                    }, ...this.$store.getters.axiosDefautConfig
+                })
                 .then((response) => {
                     this.comments.push(response.data.comments);
                 })
@@ -252,11 +256,12 @@
                 return this.num_comment - 1;
             },
             supprMessage(id_post) {
-                axios.post(this.$store.state.url_api + '/message/delete', {
-                    user_id: this.$store.state.user.id,
-                    user_status: this.$store.state.user.status,
-                    id_post: id_post
-                }, this.$store.getters.axiosDefautConfig)
+                axios.delete(this.$store.state.url_api + '/message/' + id_post, {
+                    data: {
+                        user_id: this.$store.state.user.id,
+                        user_status: this.$store.state.user.status
+                    }, ...this.$store.getters.axiosDefautConfig
+                })
                 .then((response) => {
                     alert(response.data.message);
                 })
@@ -265,11 +270,12 @@
                 });
             },
             supprComment(id_comment) {
-                axios.post(this.$store.state.url_api + '/comment/delete', {
-                    user_id: this.$store.state.user.id,
-                    user_status: this.$store.state.user.status,
-                    id_comment: id_comment
-                }, this.$store.getters.axiosDefautConfig)
+                axios.delete(this.$store.state.url_api + '/comment/' + id_comment, {
+                    data: {
+                        user_id: this.$store.state.user.id,
+                        user_status: this.$store.state.user.status
+                    }, ...this.$store.getters.axiosDefautConfig
+                })
                 .then((response) => {
                     alert(response.data.message);
                 })

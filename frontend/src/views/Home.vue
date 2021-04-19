@@ -51,9 +51,11 @@
         methods: {
             envoyer() {
                 this.message_serveur = false;
-                axios.post(this.$store.state.url_api + '/user/login', {
-                    email: this.email,
-                    mdp: this.mdp
+                axios.get(this.$store.state.url_api + '/user/login', {
+                    params: {
+                        email: this.email,
+                        mdp: this.mdp
+                    }
                 })
                 .then((response) => {
                     if (this.connexion_auto) {

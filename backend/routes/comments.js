@@ -6,8 +6,8 @@ const auth = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.post('/post', auth, commentCtrl.post);
-router.post('/get', auth, commentCtrl.get);
-router.post('/delete', auth, commentCtrl.deleteComment);
+router.get('/:idpost', auth, commentCtrl.getComments);
+router.post('/:idpost', auth, commentCtrl.postComment);
+router.delete('/:idcomment', auth, commentCtrl.deleteComment);
 
 module.exports = router;

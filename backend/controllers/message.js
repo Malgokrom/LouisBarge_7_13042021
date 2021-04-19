@@ -1,7 +1,7 @@
 const reqdb = require('../models/message');
 const reg = require('../modules/regex');
 
-exports.post = (req, res, next) => {
+exports.addPost = (req, res, next) => {
     let texte_secure = reg.bbcode(req.body.texte);
     const data = [
         req.body.user_id,
@@ -22,15 +22,15 @@ exports.getAllPosts = (req, res, next) => {
     });
 };
 
-exports.get = (req, res, next) => {
-    const tri = req.body.search.tri;
-    const membre_suppr = req.body.search.membre_suppr;
-    const date_apres = req.body.search.date_apres;
-    const date_avant = req.body.search.date_avant;
-    const nom = '%' + req.body.search.nom + '%';
-    const prenom = '%' + req.body.search.prenom + '%';
-    const status = parseInt(req.body.search.status, 10);
-    const texte = req.body.search.texte;
+exports.searchPosts = (req, res, next) => {
+    const tri = req.query.tri;
+    const membre_suppr = req.query.membre_suppr === 'true' ? true : false;
+    const date_apres = req.query.date_apres;
+    const date_avant = req.query.date_avant;
+    const nom = '%' + req.query.nom + '%';
+    const prenom = '%' + req.query.prenom + '%';
+    const status = parseInt(req.query.status, 10);
+    const texte = req.query.texte;
     const data = [ date_apres, date_avant, nom, prenom, status, status, texte ];
     reqdb.searchMessages(data, tri, membre_suppr, texte, (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
@@ -38,9 +38,9 @@ exports.get = (req, res, next) => {
     });
 };
 
-exports.deleteMessage = (req, res, next) => {
+exports.deletePost = (req, res, next) => {
     const user_status = req.body.user_status;
-    const id_post = req.body.id_post;
+    const id_post = parseInt(req.params.idpost, 10);
     reqdb.recupStatusAuteur([id_post], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
         const auteur_status = result.length ? result[0].status : -1;

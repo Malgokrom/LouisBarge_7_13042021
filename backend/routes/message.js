@@ -6,9 +6,9 @@ const auth = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.post('/post', auth, messageCtrl.post);
-router.post('/tous', auth, messageCtrl.getAllPosts);
-router.post('/get', auth, messageCtrl.get);
-router.post('/delete', auth, messageCtrl.deleteMessage);
+router.post('/post', auth, messageCtrl.addPost);
+router.get('/all', auth, messageCtrl.getAllPosts);
+router.get('/search', auth, messageCtrl.searchPosts);
+router.delete('/:idpost', auth, messageCtrl.deletePost);
 
 module.exports = router;
