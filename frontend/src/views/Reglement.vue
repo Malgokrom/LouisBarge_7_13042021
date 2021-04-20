@@ -4,7 +4,7 @@
         <main>
             <h1>Règlement</h1>
             <div>
-                <div class="part-1">
+                <div class="part">
                     <h2>Respect des employés</h2>
                     <ul>
                         <li>Ne divulguez pas d'informations sur la vie privée d'un autre employé sans son autorisation.</li>
@@ -12,14 +12,14 @@
                         <li>Les images de violence et de pornographie sont interdites.</li>
                     </ul>
                 </div>
-                <div class="part-2">
+                <div class="part">
                     <h2>Fonctionnement de l'application</h2>
                     <ul>
                         <li>Si vous découvrez une faille dans le code, vous êtes prié de la signaler.</li>
                         <li>Si vous trouvez un appareil sans surveillance connecté à l'application, vous devez le déconnecter.</li>
                     </ul>
                 </div>
-                <div class="part-3">
+                <div class="part">
                     <h2>Modérateurs</h2>
                     <ul>
                         <li>Les modérateurs sont nommés par le compte administrateur.</li>
@@ -52,5 +52,8 @@
         li {
             margin: 10px;
         }
+    }
+    .part {
+        max-width: 600px;
     }
 </style>

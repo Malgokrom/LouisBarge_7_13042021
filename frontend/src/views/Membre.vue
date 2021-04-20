@@ -3,44 +3,44 @@
         <Vheader />
         <main>
             <div v-show="message_serveur">{{ message_serveur }}</div>
-            <div v-show="profil">
-                <figure>
+            <div class="profil" v-show="profil">
+                <figure class="profil__image">
                     <img :src="$store.state.path_avatars + profil.avatar" alt="Avatar du membre" />
                 </figure>
-                <table>
+                <table class="profil__infos">
                     <tr>
-                        <td>Nom :</td>
+                        <td>Nom&nbsp;:</td>
                         <td>{{ profil.nom }}</td>
                     </tr>
                     <tr>
-                        <td>Prénom :</td>
+                        <td>Prénom&nbsp;:</td>
                         <td>{{ profil.prenom }}</td>
                     </tr>
                     <tr>
-                        <td>Email :</td>
+                        <td>Email&nbsp;:</td>
                         <td>{{ profil.email }}</td>
                     </tr>
                     <tr>
-                        <td>Inscription :</td>
+                        <td>Inscription&nbsp;:</td>
                         <td>{{ profil.date_inscription }}</td>
                     </tr>
                     <tr>
-                        <td>Dernière connexion :</td>
+                        <td>Connexion&nbsp;:</td>
                         <td>{{ profil.derniere_connexion }}</td>
                     </tr>
                     <tr>
-                        <td>Status :</td>
+                        <td>Status&nbsp;:</td>
                         <td>{{ $store.getters.getStatusTexte(profil.status) }}</td>
                     </tr>
                 </table>
-                <div v-show="profil.description">
-                    <div>Description :</div>
+                <div class="profil__description" v-show="profil.description">
+                    <div>Description&nbsp;:</div>
                     <div v-html="profil.description"></div>
                 </div>
-                <div v-if="$store.state.user.status === 9 && profil.status !== 9">
-                    <div v-if="profil.status !== 0"><button @click="setStatus(0)">Définir comme employé</button></div>
-                    <div v-if="profil.status !== 1"><button @click="setStatus(1)">Définir comme modérateur</button></div>
-                    <div v-if="profil.status !== 9"><button @click="supprProfil()">Supprimer le profil</button></div>
+                <div class="profil__actions" v-if="$store.state.user.status === 9 && profil.status !== 9">
+                    <button v-if="profil.status !== 0" @click="setStatus(0)">Définir comme employé</button>
+                    <button v-if="profil.status !== 1" @click="setStatus(1)">Définir comme modérateur</button>
+                    <button v-if="profil.status !== 9" @click="supprProfil()">Supprimer le profil</button>
                 </div>
             </div>
         </main>
@@ -113,5 +113,64 @@
 </script>
 
 <style scoped lang="scss">
+    .profil {
+        display: flex;
+        flex-direction: column;
+        max-width: 700px;
+        padding: 20px 0;
+        &__image {
+            img {
+                max-width: 100%;
+            }
+        }
+        &__infos {
+            margin: 15px auto;
+            tr {
+                td {
+                    &:nth-child(1) {
+                        font-weight: bold;
+                        text-align: right;
+                        padding-right: 10px;
+                    }
+                }
+            }
+        }
+        &__description {
+            margin: 0 auto;
+            div:nth-child(1) {
+                font-weight: bold;
+            }
+            div:nth-child(2) {
+                background-color: #90B0FF;
+                padding: 10px;
+                margin: 10px 0;
+                border: 4px groove #4080C0;
+                border-radius: 10px;
 
+            }
+        }
+        &__actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            button {
+                display: block;
+                background-color: #003070;
+                color: #FFFFFF;
+                font-weight: bold;
+                width: 100%;
+                max-width: 350px;
+                margin: 10px;
+                padding: 15px 30px;
+                border: 3px groove #0056AD;
+                border-radius: 15px;
+                cursor: pointer;
+                outline: none;
+                transition: all 300ms;
+                &:hover, &:focus, &:active {
+                    background-color: #005090;
+                }
+            }
+        }
+    }
 </style>

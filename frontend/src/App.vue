@@ -41,7 +41,7 @@
         main {
             display: flex;
             flex-direction: column;
-            background-color: #D0D0FF;
+            background-color: #A0DDDD;
             align-items: center;
             flex-grow: 1;
             padding: 0 20px;

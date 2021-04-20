@@ -119,7 +119,7 @@
                     border-radius: 8px;
                     outline: none;
                     &:focus {
-                        border-color: #0056ad;
+                        border-color: #0056AD;
                     }
                 }
             }
@@ -131,7 +131,7 @@
                 width: 100%;
                 margin-top: 20px;
                 padding: 10px;
-                border: 3px groove #0056ad;
+                border: 3px groove #0056AD;
                 border-radius: 15px;
                 cursor: pointer;
                 outline: none;

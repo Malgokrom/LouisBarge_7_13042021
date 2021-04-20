@@ -92,7 +92,7 @@
         font-weight: bold;
         margin-top: 20px;
         padding: 15px 30px;
-        border: 3px groove #0056ad;
+        border: 3px groove #0056AD;
         border-radius: 15px;
         cursor: pointer;
         outline: none;

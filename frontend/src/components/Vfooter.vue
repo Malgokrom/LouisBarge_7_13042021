@@ -20,7 +20,7 @@
     .vfooter {
         display: flex;
         justify-content: center;
-        background-color: #002060;
+        background-color: #002090;
         color: #FFFFFF;
         font-weight: bold;
         text-align: center;
