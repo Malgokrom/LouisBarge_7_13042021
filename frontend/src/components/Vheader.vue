@@ -115,20 +115,20 @@
         ul {
             padding: 20px;
             margin: 0;
-        }
-        li {
-            list-style-type: none;
-            padding: 8px;
-            a {
-                color: #FFFF80;
-                font-weight: bold;
-                text-decoration: none;
+            li {
+                list-style-type: none;
                 padding: 8px;
-                border-radius: 8px;
-                &:hover, &:focus, &:active {
-                    background-color: #008080;
-                    color: #FFD000;
-                    font-style: italic;
+                a {
+                    color: #FFFF80;
+                    font-weight: bold;
+                    text-decoration: none;
+                    padding: 8px;
+                    border-radius: 8px;
+                    &:hover, &:focus, &:active {
+                        background-color: #008080;
+                        color: #FFD000;
+                        font-style: italic;
+                    }
                 }
             }
         }

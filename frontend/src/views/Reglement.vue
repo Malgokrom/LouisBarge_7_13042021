@@ -2,8 +2,8 @@
     <div class="reglement">
         <Vheader />
         <main>
+            <h1>Règlement</h1>
             <div>
-                <h1>Règlement</h1>
                 <div class="part-1">
                     <h2>Respect des employés</h2>
                     <ul>
@@ -43,5 +43,14 @@
 </script>
 
 <style scoped lang="scss">
-
+    h1 {
+        margin-bottom: 0;
+    }
+    ul {
+        padding-left: 10px;
+        margin-bottom: 30px;
+        li {
+            margin: 10px;
+        }
+    }
 </style>
