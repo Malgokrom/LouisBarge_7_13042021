@@ -5,7 +5,7 @@
             <h1>Préférences</h1>
             <table>
                 <tr>
-                    <td>Texte :</td>
+                    <td>Texte&nbsp;:</td>
                     <td>
                         <select v-model="preferences.texte" @change="changeTexte(preferences.texte)">
                             <option value="80%">petit</option>
@@ -15,7 +15,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Police :</td>
+                    <td>Police&nbsp;:</td>
                     <td>
                         <select v-model="preferences.police" @change="changePolice(preferences.police)">
                             <option value="roboto" selected>Roboto</option>
@@ -75,5 +75,30 @@
 </script>
 
 <style scoped lang="scss">
-
+    table {
+        tr {
+            td {
+                padding: 5px;
+            }
+            td:nth-child(1) {
+                text-align: right;
+            }
+        }
+    }
+    button {
+        display: block;
+        background-color: #003070;
+        color: #FFFFFF;
+        font-weight: bold;
+        margin-top: 20px;
+        padding: 15px 30px;
+        border: 3px groove #0056ad;
+        border-radius: 15px;
+        cursor: pointer;
+        outline: none;
+        transition: all 300ms;
+        &:hover, &:focus, &:active {
+            background-color: #005090;
+        }
+    }
 </style>
