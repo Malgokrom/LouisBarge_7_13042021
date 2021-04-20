@@ -37,13 +37,14 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            main {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                flex-grow: 1;
-                padding: 0 20px;
-            }
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            background-color: #D0D0FF;
+            align-items: center;
+            flex-grow: 1;
+            padding: 0 20px;
         }
     }
 </style>

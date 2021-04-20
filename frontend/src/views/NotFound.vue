@@ -16,5 +16,6 @@
 <style scoped lang="scss">
     .not-found {
         text-align: center;
+        padding: 20px;
     }
 </style>

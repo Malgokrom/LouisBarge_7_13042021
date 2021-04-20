@@ -1,7 +1,7 @@
 <template>
     <div class="inscription">
         <figure class="inscription__logo">
-            <img src="../assets/logos/icon.svg" alt="Logo" />
+            <img src="../assets/logos/icon_blue.svg" alt="Logo" />
         </figure>
         <h1 class="inscription__titre">Inscription</h1>
         <form class="inscription__form">

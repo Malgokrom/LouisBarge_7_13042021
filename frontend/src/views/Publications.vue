@@ -4,9 +4,10 @@
         <main>
             <h1>Publications</h1>
             <button @click="form_post = !form_post">Poster un message</button>
+            <!--<form id="form-post" enctype="multipart/form-data" v-show="form_post"> -->
             <form v-show="form_post">
                 <textarea rows="15" cols="50" v-model="post.texte"></textarea><br />
-                <!-- Ajouter l'image -->
+                <!-- <input type="file" id="img-post" name="image" ref="file" /> -->
                 <div @click="infos_bbcode = !infos_bbcode">Utilisation du BBcode :</div>
                 <div v-show="infos_bbcode">
                     <p>[b] <b>Gras</b> [/b]</p>
@@ -192,6 +193,29 @@
             }
         },
         methods: {
+            /*poster() {
+                const form = document.getElementById('form-post');
+                const img_post = document.getElementById('img-post');
+                let data = new FormData(form);
+                data.append('user_id', this.$store.state.user.id);
+                data.append('user_status', this.$store.state.user.status);
+                data.append('texte', this.post.texte);
+                data.append('image', img_post.files[0]);
+                console.log(data.get('texte'));
+                axios.post(this.$store.state.url_api + '/message/post', data, {
+                    headers: {
+                        authorization: 'token ' + this.$store.state.token,
+                        'Content-Type' : 'multipart/form-data'
+                    }
+                })
+                .then((response) => {
+                    alert(response.data.message);
+                    this.post.texte = '';
+                })
+                .catch((error) => {
+                    alert(error.response.data.message);
+                });
+            },*/
             poster() {
                 axios.post(this.$store.state.url_api + '/message/post', {
                     user_id: this.$store.state.user.id,

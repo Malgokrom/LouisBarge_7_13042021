@@ -1,4 +1,5 @@
 const express = require('express');
+/*const path = require('path');*/
 
 const userRoutes = require('./routes/user');
 const messageRoutes = require('./routes/message');
@@ -14,7 +15,9 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-/*app.use(express.urlencoded({ extended: true }));*/
+/*app.use(express.urlencoded({ extended: true }))*/
+
+/*app.use('/images', express.static(path.join(__dirname, 'images')));*/
 
 app.use('/api/user', userRoutes);
 app.use('/api/message', messageRoutes);

@@ -25,6 +25,7 @@
                     <li><router-link to="/publications">Publications</router-link></li>
                     <li><router-link to="/listemembres">Membres</router-link></li>
                     <li><router-link to="/reglement">Règlement</router-link></li>
+                    <li><router-link to="/azerty">NOT FOUND</router-link></li>
                 </ul>
             </div>
             <div class="nav-account" v-show="nav_account">
@@ -73,14 +74,14 @@
 <style scoped lang="scss">
     header {
         display: flex;
-        background-color: #FFFF80;
+        background-color: #0060FF;
+        border-bottom: 5px solid #004080;
         figure {
             text-align: center;
             padding: 20px;
             margin: 0;
         }
         .menu {
-            background-color: red;
             figure {
                 cursor: pointer;
                 img {
@@ -90,13 +91,14 @@
         }
         .logo {
             flex: 1;
-            background-color: blue;
             img {
                 max-height: 50px;
+                @media (max-width: 500px) {
+		            display: none;
+                }
             }
         }
         .profil {
-            background-color: lime;
             figure {
                 cursor: pointer;
                 img {
@@ -109,7 +111,6 @@
         }
     }
     nav {
-        background-color: blue;
         position: relative;
         ul {
             padding: 20px;
@@ -117,14 +118,34 @@
         }
         li {
             list-style-type: none;
+            padding: 8px;
+            a {
+                color: #FFFF80;
+                font-weight: bold;
+                text-decoration: none;
+                padding: 8px;
+                border-radius: 8px;
+                &:hover, &:focus, &:active {
+                    background-color: #008080;
+                    color: #FFD000;
+                    font-style: italic;
+                }
+            }
         }
         .nav-appli {
-            background-color: yellow;
+            background-color: #2040D0;
+            border-right: 5px solid #004080;
+            border-bottom: 5px solid #004080;
+            border-bottom-right-radius: 15px;
             position: absolute;
             top: 0; left: 0;
         }
         .nav-account {
-            background-color: aqua;
+            background-color: #2040D0;
+            text-align: right;
+            border-left: 5px solid #004080;
+            border-bottom: 5px solid #004080;
+            border-bottom-left-radius: 15px;
             position: absolute;
             top: 0; right: 0;
         }

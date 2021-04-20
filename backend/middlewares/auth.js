@@ -2,6 +2,11 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
     try {
+        /*if (req.file) { console.log('image'); }
+        console.log(JSON.stringify(req.body));
+        console.log(JSON.stringify(req.query));
+        console.log(JSON.stringify(req.params));
+        console.log(JSON.stringify(req.headers));*/
         const user_id = req.query.user_id !== undefined ? parseInt(req.query.user_id, 10) : req.body.user_id;
         const user_status = req.query.user_status !== undefined ? parseInt(req.query.user_status, 10) : req.body.user_status;
         const token = req.headers.authorization.split(' ')[1];

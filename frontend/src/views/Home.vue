@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <figure class="home__logo">
-            <img src="../assets/logos/icon.svg" alt="Logo" />
+            <img src="../assets/logos/icon_blue.svg" alt="Logo" />
         </figure>
         <h1 class="home__titre">Connexion</h1>
         <form class="home__form">
