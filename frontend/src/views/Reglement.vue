@@ -3,6 +3,7 @@
         <Vheader />
         <main>
             <h1>Règlement</h1>
+            <hr />
             <div>
                 <div class="part">
                     <h2>Respect des employés</h2>
@@ -43,8 +44,10 @@
 </script>
 
 <style scoped lang="scss">
-    h1 {
-        margin-bottom: 0;
+    hr {
+        width: 80%;
+        max-width: 700px;
+        margin: 0;
     }
     ul {
         padding-left: 10px;

@@ -116,7 +116,9 @@
     .profil {
         display: flex;
         flex-direction: column;
-        max-width: 700px;
+        align-items: center;
+        width: 700px;
+        max-width: 100%;
         padding: 20px 0;
         &__image {
             img {

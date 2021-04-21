@@ -34,29 +34,19 @@
                     <label for="supprimer">Supprimer votre compte</label>
                 </div>
                 <div>
-                    <label for="confirm">Confirmation :</label><br />
+                    <label id="label-confirm" for="confirm">Confirmation</label>
                     <input type="password" id="confirm" placeholder="Mot de passe actuel" v-model="old_mdp" required />
                 </div>
-                <button type="submit" @click.prevent="modifier">Modifier</button>
+                <button type="submit" @click.prevent="enregistrer">Enregistrer</button>
             </form>
-            <p v-show="!ok_nom">
-                Le nom doit faire entre 1 et 64 caractères et peut contenir des lettres, des tirets et des espaces.
-            </p>
-            <p v-show="!ok_prenom">
-                Le prénom doit faire entre 1 et 64 caractères et peut contenir des lettres, des tirets et des espaces.
-            </p>
-            <p v-show="!ok_email">
-                Veuillez saisir une adresse email valide.
-            </p>
-            <p v-show="!ok_new_mdp">
-                Le mot de passe doit faire entre 8 et 64 caractères.
-            </p>
-            <p v-show="!ok_new_mdp2">
-                Le mot de passe a été mal recopié.
-            </p>
-            <p v-show="message_serveur">
-                {{ message_serveur }}
-            </p>
+            <div class="messages">
+                <p v-show="!ok_nom">Le nom doit faire entre 1 et 64 caractères et peut contenir des lettres, des tirets et des espaces.</p>
+                <p v-show="!ok_prenom">Le prénom doit faire entre 1 et 64 caractères et peut contenir des lettres, des tirets et des espaces.</p>
+                <p v-show="!ok_email">Veuillez saisir une adresse email valide.</p>
+                <p v-show="!ok_new_mdp">Le mot de passe doit faire entre 8 et 64 caractères.</p>
+                <p v-show="!ok_new_mdp2">Le mot de passe a été mal recopié.</p>
+                <p v-show="message_serveur">{{ message_serveur }}</p>
+            </div>
         </main>
         <Vfooter />
     </div>
@@ -93,7 +83,7 @@
             }
         },
         methods: {
-            modifier() {
+            enregistrer() {
                 this.message_serveur = false;
                 this.ok_nom = this.regex_nom.test(this.nom) || !this.nom;
                 this.ok_prenom = this.regex_nom.test(this.prenom) || !this.prenom;
@@ -134,11 +124,64 @@
 </script>
 
 <style scoped lang="scss">
-    form {
-        > div {
-            background-color: aqua;
-            padding: 10px;
-            margin: 10px;
+    figure {
+        max-width: 100%;
+        img {
+            width: 100%;
         }
+    }
+    form {
+        div {
+            margin: 10px 0;
+            label {
+                position: relative;
+                bottom: 3px;
+            }
+            input {
+                padding: 5px;
+                border: 3px groove #808080;
+                border-radius: 8px;
+                outline: none;
+                &:focus {
+                    border-color: #0056AD;
+                }
+            }
+            textarea {
+                font-size: 1.2em;
+                width: 100%;
+                height: 150px;
+            }
+        }
+        button {
+            display: block;
+            background-color: #003070;
+            color: #FFFFFF;
+            font-weight: bold;
+            width: 100%;
+            margin: 30px auto;
+            padding: 15px 30px;;
+            border: 3px groove #0056AD;
+            border-radius: 15px;
+            cursor: pointer;
+            outline: none;
+            transition: all 300ms;
+            &:hover, &:focus, &:active {
+                background-color: #005090;
+            }
+        }
+    }
+    #mdp {
+        border-bottom-width: 2px;
+        border-radius: 8px 8px 0 0;
+    }
+    #mdp2 {
+        border-top-width: 2px;
+        border-radius: 0 0 8px 8px;
+    }
+    #label-confirm {
+        display: block;
+        font-weight: bold;
+        font-size: 1.2em;
+        text-align: center;
     }
 </style>

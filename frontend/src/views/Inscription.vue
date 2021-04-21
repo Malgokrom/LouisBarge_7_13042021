@@ -107,7 +107,7 @@
         &__form {
             margin: 0 auto;
             div {
-                margin: 10px 0 10px 0;
+                margin: 10px 0;
                 label {
                     position: relative;
                     bottom: 3px;
