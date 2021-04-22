@@ -18,9 +18,9 @@ exports.recupComments = (data, callback) => {
     `, data, callback);
 };
 
-exports.recupStatusAuteur = (data, callback) => {
+exports.recupIdStatusAuteur = (data, callback) => {
     db.query(`
-        SELECT m.status
+        SELECT m.id, m.status
         FROM Membres AS m
         INNER JOIN Commentaires AS c
         ON m.id = c.id_membres

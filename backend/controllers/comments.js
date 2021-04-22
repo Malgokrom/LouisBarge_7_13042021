@@ -24,12 +24,14 @@ exports.getComments = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
+    const user_id = req.body.user_id;
     const user_status = req.body.user_status;
     const id_comment = parseInt(req.params.idcomment, 10);
-    reqdb.recupStatusAuteur([id_comment], (error, result) => {
+    reqdb.recupIdStatusAuteur([id_comment], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+        const auteur_id = result.length ? result[0].id : -1;
         const auteur_status = result.length ? result[0].status : -1;
-        if (user_status === auteur_status || user_status === 9 || (user_status === 1 && auteur_status !== 9)) {
+        if (user_id === auteur_id || user_status === 9 || (user_status === 1 && auteur_status !== 9)) {
             reqdb.deleteComment([id_comment]);
             return res.status(200).json({ message: 'Le commentaire a bien été supprimé.' });
         }

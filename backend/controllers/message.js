@@ -39,12 +39,14 @@ exports.searchPosts = (req, res, next) => {
 };
 
 exports.deletePost = (req, res, next) => {
+    const user_id = req.body.user_id;
     const user_status = req.body.user_status;
     const id_post = parseInt(req.params.idpost, 10);
-    reqdb.recupStatusAuteur([id_post], (error, result) => {
+    reqdb.recupIdStatusAuteur([id_post], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+        const auteur_id = result.length ? result[0].id : -1;
         const auteur_status = result.length ? result[0].status : -1;
-        if (user_status === auteur_status || user_status === 9 || (user_status === 1 && auteur_status !== 9)) {
+        if (user_id === auteur_id || user_status === 9 || (user_status === 1 && auteur_status !== 9)) {
             reqdb.deleteMessage([id_post]);
             return res.status(200).json({ message: 'Le post a bien été supprimé.' });
         }

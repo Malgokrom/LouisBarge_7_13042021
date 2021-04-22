@@ -12,7 +12,7 @@
             </div>
             <form class="form-search" v-show="form_search">
                 <h2 class="form-search__titre">Recherche</h2>
-                <table class="form-search__infos-users">
+                <table class="form-search__infos">
                     <tr>
                         <td><label for="nom">Nom&nbsp;:</label></td>
                         <td><input type="text" id="nom" v-model="search.nom" /></td>
@@ -36,7 +36,7 @@
                     </tr>
                 </table>
                 <table class="form-search__dates">
-                    <caption>Date d'inscription&nbsp;:</caption>
+                    <caption>Date d'inscription</caption>
                     <tr>
                         <td>entre le&nbsp;:</td>
                         <td><input type="date" v-model="search.date_apres" /></td>
@@ -46,8 +46,8 @@
                         <td><input type="date" v-model="search.date_avant" /></td>
                     </tr>
                 </table>
-                <div  class="form-search__tri">
-                    <label for="tri">Trier par date d'inscription&nbsp;:</label><br />
+                <div class="form-search__tri">
+                    <label for="tri">Trier par date d'inscription&nbsp;:&nbsp;</label>
                     <select id="tri" v-model="search.tri" >
                         <option value="DESC" selected>Descendant</option>
                         <option value="ASC">Ascendant</option>
@@ -162,7 +162,7 @@
             text-align: center;
             margin: 0px 0 15px 0;
         }
-        &__infos-users {
+        &__infos {
             td {
                 padding: 3px 0;
                 input {

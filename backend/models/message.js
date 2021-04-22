@@ -38,9 +38,9 @@ exports.searchMessages = (data, tri, membre_suppr, texte, callback) => {
     , data, callback);
 };
 
-exports.recupStatusAuteur = (data, callback) => {
+exports.recupIdStatusAuteur = (data, callback) => {
     db.query(`
-        SELECT m.status
+        SELECT m.id, m.status
         FROM Membres AS m
         INNER JOIN Posts AS p
         ON m.id = p.id_membres
