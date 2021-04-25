@@ -4,7 +4,7 @@
         <main>
             <div v-show="message_serveur">{{ message_serveur }}</div>
             <div class="profil" v-show="profil">
-                <figure class="profil__image">
+                <figure v-if="profil.avatar !== undefined" class="profil__image">
                     <img :src="$store.state.path_avatars + profil.avatar" alt="Avatar du membre" />
                 </figure>
                 <table class="profil__infos">

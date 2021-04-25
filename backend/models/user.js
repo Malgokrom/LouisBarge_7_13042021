@@ -74,7 +74,7 @@ exports.searchMembres = (data, tri, callback) => {
 exports.updateMembre = (data, callback) => {
     db.query(`
         UPDATE Membres
-        SET nom = ?, prenom = ?, email = ?, mdp = ?, description = ?
+        SET nom = ?, prenom = ?, email = ?, mdp = ?, description = ?, avatar = ?
         WHERE id = ?
     `, data, callback);
 };

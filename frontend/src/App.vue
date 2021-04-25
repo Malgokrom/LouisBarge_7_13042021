@@ -14,6 +14,14 @@
         src: url("../public/polices//Roboto-Regular.ttf");
     }
     @font-face {
+        font-family: "hopalong";
+        src: url("../public/polices/Hopalong-bold.ttf");
+    }
+    @font-face {
+        font-family: "karin";
+        src: url("../public/polices/Karin-regular.ttf");
+    }
+    @font-face {
         font-family: "g731";
         src: url("../public/polices/G731-script-regular.ttf");
     }

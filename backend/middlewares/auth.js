@@ -2,16 +2,14 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
     try {
-        /*if (req.file) { console.log('image'); }
-        console.log(JSON.stringify(req.body));
-        console.log(JSON.stringify(req.query));
-        console.log(JSON.stringify(req.params));
-        console.log(JSON.stringify(req.headers));*/
-        const user_id = req.query.user_id !== undefined ? parseInt(req.query.user_id, 10) : req.body.user_id;
-        const user_status = req.query.user_status !== undefined ? parseInt(req.query.user_status, 10) : req.body.user_status;
+        let user_id, user_status;
+        if (req.body.user_id !== undefined) { user_id = req.body.user_id; user_status = req.body.user_status; }
+        else if (req.query.user_id !== undefined) { user_id = req.query.user_id; user_status = req.query.user_status; }
+        else if (req.params.iduser !== undefined) { user_id = req.params.iduser; user_status = req.params.statususer; }
+        else { throw 'Erreur : données d\'authentification requises'; }
         const token = req.headers.authorization.split(' ')[1];
         const decoded_token = jwt.verify(token, 'WIOd89ELnQyArth1dGK2fSm7hnJit7U7');
-        if (user_id === decoded_token.user_id && user_status === decoded_token.user_status) {
+        if (user_id == decoded_token.user_id && user_status == decoded_token.user_status) {
             next();
         } else {
             throw 'Erreur : token d\'authentification invalide';

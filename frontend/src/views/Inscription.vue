@@ -7,11 +7,11 @@
         <form class="inscription__form">
             <div>
                 <label for="nom">Nom :</label><br />
-                <input type="text" id="nom" placeholder="nom" v-model="nom" />
+                <input type="text" id="nom" placeholder="nom" title="[1-64] : lettres, tiret" v-model="nom" />
             </div>
             <div>
                 <label for="prenom">Prénom :</label><br />
-                <input type="text" id="prenom" placeholder="prénom" v-model="prenom" />
+                <input type="text" id="prenom" placeholder="prénom" title="[1-64] : lettres, tiret" v-model="prenom" />
             </div>
             <div>
                 <label for="email">Email :</label><br />
@@ -19,8 +19,8 @@
             </div>
             <div>
                 <label for="mdp">Mot de passe :</label><br />
-                <input type="password" id="mdp" placeholder="mot de passe" v-model="mdp" /><br />
-                <input type="password" id="mdp2" placeholder="confirmation" v-model="mdp2" />
+                <input type="password" id="mdp" placeholder="mot de passe" title="[8-64]" v-model="mdp" /><br />
+                <input type="password" id="mdp2" placeholder="confirmation" title="[8-64]" v-model="mdp2" />
             </div>
             <button type="submit" @click.prevent="envoyer">S'inscrire</button>
         </form>
@@ -156,7 +156,7 @@
             }
         }
         &__messages {
-            color: #FF4000;
+            color: #FF0000;
             font-weight: bold;
             margin: 0 auto;
         }

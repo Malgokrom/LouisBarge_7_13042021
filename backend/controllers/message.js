@@ -1,14 +1,14 @@
+const fs = require('fs');
+
 const reqdb = require('../models/message');
 const reg = require('../modules/regex');
 
 exports.addPost = (req, res, next) => {
-    let texte_secure = reg.bbcode(req.body.texte);
-    const data = [
-        req.body.user_id,
-        texte_secure,
-        req.body.image
-    ];
-    /* Tester si le texte et l'image ne sont pas vides */
+    const user_id = parseInt(req.params.iduser, 10);
+    const texte_secure = reg.bbcode(req.body.texte);
+    const image = req.file ? req.file.filename : null;
+    const data = [ user_id, texte_secure, image ];
+    if (!texte_secure && !image) { return res.status(500).json({ message: 'Le post doit contenir du texte et/ou une image.' }); }
     reqdb.ajoutMessage(data, (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
         res.status(200).json({ message: 'Le message a bien été posté.' });
@@ -42,11 +42,13 @@ exports.deletePost = (req, res, next) => {
     const user_id = req.body.user_id;
     const user_status = req.body.user_status;
     const id_post = parseInt(req.params.idpost, 10);
-    reqdb.recupIdStatusAuteur([id_post], (error, result) => {
+    reqdb.recupInfosSuppr([id_post], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
         const auteur_id = result.length ? result[0].id : -1;
         const auteur_status = result.length ? result[0].status : -1;
+        const post_image = result.length ? result[0].image : null;
         if (user_id === auteur_id || user_status === 9 || (user_status === 1 && auteur_status !== 9)) {
+            if (post_image) { fs.unlink('images/posts/' + post_image, () => {}); }
             reqdb.deleteMessage([id_post]);
             return res.status(200).json({ message: 'Le post a bien été supprimé.' });
         }

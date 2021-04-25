@@ -143,7 +143,7 @@
             }
         }
         &__messages {
-            color: #FF4000;
+            color: #FF0000;
             font-weight: bold;
             margin: 0 auto;
         }

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 const reg = require('../modules/regex');
 const reqdb = require('../models/user');
@@ -120,9 +121,12 @@ exports.setStatus = (req, res, next) => {
 
 exports.deleteMembre = (req, res, next) => {
     if (req.body.user_status === 9) {
-        reqdb.deleteMembre([req.params.idmembre], (error, result) => {
-            if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
-            res.status(200).json({ message: 'Le profil a bien été supprimé.' });
+        reqdb.recupMembreById([req.params.idmembre], (error, result) => {
+            if (result[0].avatar !== '0.png') { fs.unlink('images/avatars/' + result[0].avatar, () => {}); }
+            reqdb.deleteMembre([req.params.idmembre], (error, result) => {
+                if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+                res.status(200).json({ message: 'Le profil a bien été supprimé.' });
+            }); 
         });
     } else {
         res.status(401).json({ message: 'Vous n\'avez pas l\'autorisation de supprimer un profil.' });
@@ -130,12 +134,19 @@ exports.deleteMembre = (req, res, next) => {
 };
 
 exports.updateMembre = (req, res, next) => {
-    reqdb.recupMembreById([req.body.user_id], (error, result) => {
+    const user_id = parseInt(req.params.iduser, 10);
+    reqdb.recupMembreById([user_id], (error, result) => {
         if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
+        const old_image = result[0].avatar;
+        const new_image = req.file ? req.file.filename : old_image;
         bcrypt.compare(req.body.old_mdp, result[0].mdp).then((valid) => {
-            if (!valid) { return res.status(401).json({ message: 'Le mot de passe est incorrect.' }); }
-            if (req.body.supprimer) {
-                reqdb.deleteMembre([req.body.user_id], (error, result) => {
+            if (!valid) {
+                if (req.file) { fs.unlink('images/avatars/' + new_image, () => {}); }
+                return res.status(401).json({ message: 'Le mot de passe est incorrect.' });
+            }
+            if (req.body.supprimer === 'true') {
+                reqdb.deleteMembre([user_id], (error, result) => {
+                    if (old_image !== '0.png') { fs.unlink('images/avatars/' + old_image, () => {}); }
                     if (error) { return res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
                     res.status(200).json({ message: 'Votre compte a bien été supprimé.' });
                 });
@@ -147,13 +158,14 @@ exports.updateMembre = (req, res, next) => {
                 if (!reg.nom.test(new_nom) || !reg.nom.test(new_prenom) || !reg.email.test(new_email) || (new_mdp && !reg.mdp.test(new_mdp))) {
                     return res.status(500).json({ message: 'Les données reçues par le serveur sont invalides.' });
                 }
+                if (req.file && old_image !== '0.png') { fs.unlink('images/avatars/' + old_image, () => {}); }
                 const new_description = req.body.description ? reg.bbcode(req.body.description) : result[0].description;
                 if (new_mdp) {
                     bcrypt.hash(new_mdp, 10).then((hash) => {
-                        const new_data = [ new_nom, new_prenom, new_email, hash, new_description, req.body.user_id ];
+                        const new_data = [ new_nom, new_prenom, new_email, hash, new_description, new_image, user_id ];
                         reqdb.updateMembre(new_data, (error, result) => {
                             if (error) { return res.status(500).json({ message: 'Cet email est déjà utilisé.' }); }
-                            reqdb.recupMembreById([req.body.user_id], (error, result) => {
+                            reqdb.recupMembreById([user_id], (error, result) => {
                                 if (error) { res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
                                 res.status(200).json({
                                     message: 'Votre compte a bien été modifié.',
@@ -175,10 +187,10 @@ exports.updateMembre = (req, res, next) => {
                         res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' });
                     });
                 } else {
-                    const new_data = [ new_nom, new_prenom, new_email, result[0].mdp, new_description, req.body.user_id ];
+                    const new_data = [ new_nom, new_prenom, new_email, result[0].mdp, new_description, new_image, user_id ];
                     reqdb.updateMembre(new_data, (error, result) => {
                         if (error) { return res.status(500).json({ message: 'Cet email est déjà utilisé.' }); }
-                        reqdb.recupMembreById([req.body.user_id], (error, result) => {
+                        reqdb.recupMembreById([user_id], (error, result) => {
                             if (error) { res.status(500).json({ message: 'Une erreur s\'est produite sur le serveur.' }); }
                             res.status(200).json({
                                 message: 'Votre compte a bien été modifié.',

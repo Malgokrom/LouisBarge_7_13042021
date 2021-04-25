@@ -19,6 +19,8 @@
                     <td>
                         <select v-model="preferences.police" @change="changePolice(preferences.police)">
                             <option value="roboto" selected>Roboto</option>
+                            <option value="hopalong">Hopalong</option>
+                            <option value="karin">Karin</option>
                             <option value="g731">G731</option>
                         </select>
                     </td>

@@ -4,7 +4,8 @@ export default createStore({
     state: {
         date_mise_en_service: '2021-01-01',
         url_api: 'http://localhost:3000/api',
-        path_avatars: '/images/avatars/',
+        path_avatars: 'http://localhost:3000/images/avatars/',
+        path_images: 'http://localhost:3000/images/posts/',
         path_icones: '/images/icones/',
         liste_status: [
             { numero: 0, texte: 'Employé' },

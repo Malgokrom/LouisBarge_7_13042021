@@ -6,38 +6,41 @@
             <figure>
                 <img :src="$store.getters.getPathAvatar" alt="Votre avatar" />
             </figure>
-            <form>
-                <!-- Ajouter l'image -->
-                <div>
+            <form class="form">
+                <div class="form__file">
+                    <label for="file">Modifiez votre image de profil</label><br />
+                    <input id="file" type="file" ref="file" name="image" accept="image/png, image/jpeg, image/jpg" @change="recupImage()" />
+                </div>
+                <div class="form__nom">
                     <label for="nom">Nom :</label><br />
-                    <input type="text" id="nom" :placeholder="$store.state.user.nom" v-model="nom" />
+                    <input type="text" id="nom" title="[1-64] : lettres, tiret" :placeholder="$store.state.user.nom" v-model="nom" />
                 </div>
-                <div>
+                <div class="form__prenom">
                     <label for="prenom">Prénom :</label><br />
-                    <input type="text" id="prenom" :placeholder="$store.state.user.prenom"  v-model="prenom" />
+                    <input type="text" id="prenom" title="[1-64] : lettres, tiret" :placeholder="$store.state.user.prenom"  v-model="prenom" />
                 </div>
-                <div>
+                <div class="form__email">
                     <label for="email">Email :</label><br />
                     <input type="email" id="email" :placeholder="$store.state.user.email" v-model="email" />
                 </div>
-                <div>
-                    <label for="mdp">Mot de passe</label><br />
-                    <input type="password" id="mdp" placeholder="Nouveau mot de passe" v-model="new_mdp" /><br />
-                    <input type="password" id="mdp2" placeholder="Nouveau mot de passe" v-model="new_mdp2" />
+                <div class="form__mdp">
+                    <label for="mdp">Mot de passe :</label><br />
+                    <input type="password" id="mdp" placeholder="Nouveau mot de passe" title="[8-64]" v-model="new_mdp" /><br />
+                    <input type="password" id="mdp2" placeholder="Nouveau mot de passe" title="[8-64]" v-model="new_mdp2" />
                 </div>
-                <div>
+                <div class="form__description">
                     <label for="description">Description :</label><br />
                     <textarea id="description" v-model="description"></textarea>
                 </div>
-                <div>
+                <div class="form__supprimer">
                     <input type="checkbox" id="supprimer" v-model="supprimer" />
                     <label for="supprimer">Supprimer votre compte</label>
                 </div>
-                <div>
+                <div class="form__confirm">
                     <label id="label-confirm" for="confirm">Confirmation</label>
                     <input type="password" id="confirm" placeholder="Mot de passe actuel" v-model="old_mdp" required />
                 </div>
-                <button type="submit" @click.prevent="enregistrer">Enregistrer</button>
+                <button class="form__btn" type="submit" @click.prevent="enregistrer">Enregistrer</button>
             </form>
             <div class="messages">
                 <p v-show="!ok_nom">Le nom doit faire entre 1 et 64 caractères et peut contenir des lettres, des tirets et des espaces.</p>
@@ -63,6 +66,7 @@
         components: { Vheader, Vfooter },
         data() {
             return {
+                image: '',
                 nom: '',
                 prenom: '',
                 email: '',
@@ -83,6 +87,9 @@
             }
         },
         methods: {
+            recupImage() {
+                this.image = this.$refs.file.files[0];
+            },
             enregistrer() {
                 this.message_serveur = false;
                 this.ok_nom = this.regex_nom.test(this.nom) || !this.nom;
@@ -91,17 +98,21 @@
                 this.ok_new_mdp = this.regex_mdp.test(this.new_mdp) || !this.new_mdp;
                 this.ok_new_mdp2 = this.new_mdp === this.new_mdp2;
                 if (this.ok_nom && this.ok_prenom && this.ok_email && this.ok_new_mdp && this.ok_new_mdp2) {
-                    axios.put(this.$store.state.url_api + '/user/update', {
-                        user_id: this.$store.state.user.id,
-                        user_status: this.$store.state.user.status,
-                        nom: this.nom,
-                        prenom: this.prenom,
-                        email: this.email,
-                        new_mdp: this.new_mdp,
-                        description: this.description,
-                        supprimer: this.supprimer,
-                        old_mdp: this.old_mdp
-                    }, this.$store.getters.axiosDefautConfig)
+                    const data = new FormData();
+                    data.append('nom', this.nom);
+                    data.append('prenom', this.prenom);
+                    data.append('email', this.email);
+                    data.append('new_mdp', this.new_mdp);
+                    data.append('description', this.description);
+                    data.append('supprimer', this.supprimer);
+                    data.append('old_mdp', this.old_mdp);
+                    data.append('image', this.image);
+                    axios.put(this.$store.state.url_api + '/user/update/' + this.$store.state.user.id + '/' + this.$store.state.user.status, data, {
+                        headers: {
+                            authorization: 'token ' + this.$store.state.token,
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
                     .then((response) => {
                         alert(response.data.message);
                         if (this.supprimer) {
@@ -130,9 +141,23 @@
             width: 100%;
         }
     }
-    form {
-        div {
-            margin: 10px 0;
+    .form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        &__file {
+            text-align: center;
+            margin: 20px 0;
+            label {
+                position: relative;
+                bottom: 10px;
+                font-size: 1.2em;
+                font-weight: bold;
+                padding-bottom: 0px;
+            }
+        }
+        &__nom, &__prenom, &__email, &__mdp {
+            margin: 5px 0;
             label {
                 position: relative;
                 bottom: 3px;
@@ -146,13 +171,24 @@
                     border-color: #0056AD;
                 }
             }
+        }
+        &__description {
+            width: 100%;
+            margin-top: 10px;
+            label {
+                position: relative;
+                bottom: 3px;
+            }
             textarea {
                 font-size: 1.2em;
                 width: 100%;
                 height: 150px;
             }
         }
-        button {
+        &__supprimer {
+            margin: 15px 0;
+        }
+        &__btn {
             display: block;
             background-color: #003070;
             color: #FFFFFF;
@@ -170,6 +206,11 @@
             }
         }
     }
+    .messages {
+        color: #FF0000;
+        font-weight: bold;
+        margin: 0 auto;
+    }
     #mdp {
         border-bottom-width: 2px;
         border-radius: 8px 8px 0 0;
@@ -183,5 +224,6 @@
         font-weight: bold;
         font-size: 1.2em;
         text-align: center;
+        padding-bottom: 5px;
     }
 </style>

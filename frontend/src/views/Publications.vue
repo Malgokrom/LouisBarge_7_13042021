@@ -10,10 +10,13 @@
                     <img src="../assets/icones/angle-up.svg" alt="Flèche haut" v-show="form_post" />
                 </figure>
             </div>
-            <!--<form id="form-post" enctype="multipart/form-data" v-show="form_post"> -->
             <form class="form-post" v-show="form_post">
-                <textarea class="form-post__texte" v-model="post.texte"></textarea><br />
-                <!-- <input type="file" id="img-post" name="image" ref="file" /> -->
+                <textarea class="form-post__texte" v-model="post.texte"></textarea>
+                <div class="form-post__file">
+                    <label for="file">Ajoutez une image</label><br />
+                    <input id="file" type="file" ref="file" name="image" accept="image/png, image/jpeg, image/jpg" @change="recupImage()" />
+                </div>
+                <button class="form-post__btn" type="submit" @click.prevent="poster">Poster</button>
                 <div class="form-post__show-bbcode" @click="infos_bbcode = !infos_bbcode">Utilisation du BBcode</div>
                 <div class="form-post__infos-bbcode" v-show="infos_bbcode">
                     <p>[b]<b> Gras </b>[/b]</p>
@@ -23,7 +26,6 @@
                     <p>[sub]<sub> Indice </sub>[/sub]</p>
                     <p>[sup]<sup> Exposant </sup>[/sup]</p>
                 </div>
-                <button class="form-post__btn" type="submit" @click.prevent="poster">Poster</button>
             </form>
             <div class="btn-show" @click="form_search = !form_search">
                 <div>Rechercher</div>
@@ -106,7 +108,10 @@
                                     <img :src="$store.state.path_icones + 'trash-alt.svg'" alt="Supprimer le post" title="Supprimer" />
                                 </figure>
                             </div>
-                            <div class="posts__content" v-html="line.message"></div>
+                            <div class="posts__content">
+                                <div v-html="line.message"></div>
+                                <figure v-if="line.image"><img :src="$store.state.path_images + line.image" alt="Image du post" /></figure>
+                            </div>
                         </div>
                         <div class="search__comments">
                             <div class="search__comment-show">
@@ -194,8 +199,7 @@
                 infos_bbcode: false,
                 post: {
                     texte: '',
-                    /* Supprimer image ? */
-                    image: null
+                    image: ''
                 },
                 form_search: false,
                 search_result: [],
@@ -216,36 +220,19 @@
             }
         },
         methods: {
-            /*poster() {
-                const form = document.getElementById('form-post');
-                const img_post = document.getElementById('img-post');
-                let data = new FormData(form);
-                data.append('user_id', this.$store.state.user.id);
-                data.append('user_status', this.$store.state.user.status);
+            recupImage() {
+                this.post.image = this.$refs.file.files[0];
+            },
+            poster() {
+                const data = new FormData();
                 data.append('texte', this.post.texte);
-                data.append('image', img_post.files[0]);
-                console.log(data.get('texte'));
-                axios.post(this.$store.state.url_api + '/message/post', data, {
+                data.append('image', this.post.image);
+                axios.post(this.$store.state.url_api + '/message/post/' + this.$store.state.user.id + '/' + this.$store.state.user.status, data, {
                     headers: {
                         authorization: 'token ' + this.$store.state.token,
-                        'Content-Type' : 'multipart/form-data'
+                        'Content-Type': 'multipart/form-data'
                     }
                 })
-                .then((response) => {
-                    alert(response.data.message);
-                    this.post.texte = '';
-                })
-                .catch((error) => {
-                    alert(error.response.data.message);
-                });
-            },*/
-            poster() {
-                axios.post(this.$store.state.url_api + '/message/post', {
-                    user_id: this.$store.state.user.id,
-                    user_status: this.$store.state.user.status,
-                    texte: this.post.texte,
-                    image: this.post.image
-                }, this.$store.getters.axiosDefautConfig)
                 .then((response) => {
                     alert(response.data.message);
                     this.post.texte = '';
@@ -369,20 +356,15 @@
             max-width: 500px;
             height: 150px;
         }
-        &__show-bbcode {
-            background-color: #60A0FF;
-            padding: 5px 10px;
+        &__file {
             margin-top: 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        &__infos-bbcode {
-            p {
-                color: #404000;
-                margin: 10px 0 0 0;
-                * {
-                    color: #000000;
-                }
+            text-align: center;
+            label {
+                position: relative;
+                bottom: 10px;
+                font-size: 1.2em;
+                font-weight: bold;
+                padding-bottom: 0px;
             }
         }
         &__btn {
@@ -399,6 +381,22 @@
             transition: all 300ms;
             &:hover, &:focus, &:active {
                 background-color: #005090;
+            }
+        }
+        &__show-bbcode {
+            background-color: #60A0FF;
+            padding: 5px 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        &__infos-bbcode {
+            p {
+                color: #404000;
+                margin: 10px 0 0 0;
+                * {
+                    color: #000000;
+                }
             }
         }
     }
@@ -578,6 +576,13 @@
         }
         &__content {
             background-color: #C0FFFF;
+            figure {
+                text-align: center;
+                margin: 10px;
+                img {
+                    max-width: 100%;
+                }
+            }
         }
     }
     .comments {
