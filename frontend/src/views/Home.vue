@@ -33,7 +33,11 @@
     export default {
         name: 'Home',
         beforeCreate() {
+            this.$store.commit('setUser', null);
+            this.$store.commit('setToken', null);
             if (localStorage.getItem('user') && localStorage.getItem('token')) {
+                sessionStorage.setItem('user', localStorage.getItem('user'));
+                sessionStorage.setItem('token', localStorage.getItem('token'));
                 this.$store.commit('setUser', JSON.parse(localStorage.getItem('user')));
                 this.$store.commit('setToken', localStorage.getItem('token'));
                 this.$router.push('/publications');
@@ -62,6 +66,8 @@
                         localStorage.setItem('user', JSON.stringify(response.data.user));
                         localStorage.setItem('token', response.data.token);
                     }
+                    sessionStorage.setItem('user', JSON.stringify(response.data.user));
+                    sessionStorage.setItem('token', response.data.token);
                     this.$store.commit('setUser', response.data.user);
                     this.$store.commit('setToken', response.data.token);
                     this.$store.commit('preferencesAll', response.data.preferences);

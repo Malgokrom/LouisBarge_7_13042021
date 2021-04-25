@@ -64,8 +64,8 @@
             deconnexion() {
                 localStorage.removeItem('user');
                 localStorage.removeItem('token');
-                this.$store.commit('setUser', null);
-                this.$store.commit('setToken', null);
+                sessionStorage.removeItem('user');
+                sessionStorage.removeItem('token');
             }
         }
     }
@@ -121,6 +121,7 @@
                 a {
                     color: #FFFF80;
                     font-weight: bold;
+                    font-size: 1.2em;
                     text-decoration: none;
                     padding: 8px;
                     border-radius: 8px;

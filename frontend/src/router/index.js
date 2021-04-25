@@ -70,4 +70,9 @@ const router = createRouter({
     routes
 });
 
+router.beforeEach((to, from, next) => {
+    if (to.fullPath !== '/' && to.fullPath !== '/inscription' && !sessionStorage.getItem('token')) { next({ name: 'Home' }); }
+    else { next(); }
+});
+
 export default router;
