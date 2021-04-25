@@ -118,8 +118,6 @@
                         if (this.supprimer) {
                             localStorage.removeItem('user');
                             localStorage.removeItem('token');
-                            this.$store.commit('setUser', null);
-                            this.$store.commit('setToken', null);
                             this.$router.push('/');
                         }
                         if (localStorage.getItem('user')) { localStorage.setItem('user', JSON.stringify(response.data.user)); }
